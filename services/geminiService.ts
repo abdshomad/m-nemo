@@ -24,6 +24,14 @@ const getSystemPrompt = (system: MnemonicSystem, number: string): string => {
        return `${basePrompt} Using the Number Shape system, describe a simple object that a digit in ${number} looks like.
       Example for a number with 2: "The digit '2' looks like a swan."
       Example for a number with 8: "The digit '8' looks like a snowman."`;
+    case MnemonicSystem.PAO:
+      return `${basePrompt} Using the Person-Action-Object (PAO) system, provide a hint for the number ${number}.
+      Break the number into 2-digit pairs. Suggest a Person for the first pair, an Action for the second, and an Object for the third.
+      Example for 123456: "Think Person(12) -> Action(34) -> Object(56). Maybe Albus Dumbledore is driving a mail truck."`;
+    case MnemonicSystem.AlphabetPeg:
+      return `${basePrompt} Using the Alphabet Peg system (1=A, 2=B, etc.), provide a hint for the number ${number}.
+      Suggest a simple sentence where the words start with the corresponding letters.
+      Example for 312: "Think C-A-B. Maybe 'Cats Always Bounce'."`;
     default:
       return `Give me a creative way to remember the number ${number}.`;
   }
@@ -119,6 +127,16 @@ const getMnemonicStorySystemPrompt = (system: MnemonicSystem, number: string, is
       1.  **Breakdown**: For each digit in the number, describe the object it visually resembles (e.g., 2=swan, 8=snowman).
       2.  **Word**: List the sequence of shape-objects.
       3.  **Story**: ${storyInstruction} This story should connect the shape-objects in the correct sequence.`;
+    case MnemonicSystem.PAO:
+        return `${basePrompt}
+      1.  **Breakdown**: Analyze the number by splitting it into pairs of digits (e.g., 12-34-56). Handle odd-length numbers by padding with a 0 at the start. State the Person for the first pair, Action for the second, and Object for the third.
+      2.  **Word**: List the Person, Action, and Object that you've chosen.
+      3.  **Story**: ${storyInstruction} This story must combine the Person, Action, and Object into a single, cohesive, and bizarre scene. The person from the first pair performs the action from the second pair on the object from the third pair.`;
+    case MnemonicSystem.AlphabetPeg:
+        return `${basePrompt}
+      1.  **Breakdown**: Convert each digit of the number into its corresponding letter of the alphabet (1=A, 2=B, 3=C, ... 9=I, 0=J/Z).
+      2.  **Word**: For each letter, create a simple, highly visual peg word that starts with that letter. List the sequence of peg words.
+      3.  **Story**: ${storyInstruction} Weave the peg words together in the correct order to form a short narrative or a single ridiculous image.`;
     default:
       return `Generate a memorable story for the number ${number}.`;
   }

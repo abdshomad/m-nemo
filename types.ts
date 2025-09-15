@@ -11,6 +11,8 @@ export enum MnemonicSystem {
   Dominic = 'Dominic System',
   NumberRhyme = 'Number Rhyme System',
   NumberShape = 'Number Shape System',
+  PAO = 'PAO System',
+  AlphabetPeg = 'Alphabet Peg System',
 }
 
 export enum PracticeMode {

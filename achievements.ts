@@ -25,6 +25,8 @@ export const ACHIEVEMENT_DEFINITIONS: Omit<Achievement, 'unlocked'>[] = [
   { id: 'dominic-master', title: 'Dominic System Master', description: 'Complete all practice modes for the Dominic System.', icon: SparklesIcon },
   { id: 'number-rhyme-master', title: 'Number Rhyme Master', description: 'Complete all practice modes for the Number Rhyme System.', icon: SparklesIcon },
   { id: 'number-shape-master', title: 'Number Shape Master', description: 'Complete all practice modes for the Number Shape System.', icon: SparklesIcon },
+  { id: 'pao-master', title: 'PAO System Master', description: 'Complete all practice modes for the PAO System.', icon: SparklesIcon },
+  { id: 'alphabet-peg-master', title: 'Alphabet Peg Master', description: 'Complete all practice modes for the Alphabet Peg System.', icon: SparklesIcon },
 ];
 
 export const TOTAL_SYSTEMS = Object.keys(MnemonicSystem).length;

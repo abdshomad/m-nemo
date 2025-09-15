@@ -62,4 +62,28 @@ export const SYSTEM_EXPLANATIONS: SystemExplanation[] = [
       { number: '28', explanation: "Imagine a 'Swan' balancing on top of a 'Snowman'." },
     ],
   },
+  {
+    id: MnemonicSystem.PAO,
+    title: 'The PAO System',
+    howItWorks: "The Person-Action-Object (PAO) system is an advanced technique where each number from 0-99 (or 00-99) is assigned a unique Person, an Action, and an Object. To memorize a 6-digit number, you break it into three 2-digit pairs. You then take the Person from the first pair, the Action from the second, and the Object from the third to create a single, highly vivid mental image.",
+    strengths: "Incredibly powerful for long numbers, as it can encode 6 digits into one image. The dynamic scenes are very memorable and less likely to be confused than static lists of objects.",
+    examples: [
+      { number: '13', explanation: "Could be **A**lbert **C**amus (Person), **writing** (Action), a **novel** (Object)." },
+      { number: '42', explanation: "Could be **D**ouglas **A**dams (Person), **hitchhiking** (Action), with a **towel** (Object)." },
+      { number: '87', explanation: "Could be **H**an **S**olo (Person), **flying** (Action), the **Millennium Falcon** (Object)." },
+      { number: '134287', explanation: "Combine Person(13), Action(42), Object(87): Albert Camus is hitchhiking with the Millennium Falcon." },
+    ],
+  },
+  {
+    id: MnemonicSystem.AlphabetPeg,
+    title: 'Alphabet Peg System',
+    howItWorks: "The Alphabet Peg system links numbers to letters of the alphabet (e.g., 1=A, 2=B, 3=C, etc.). To remember a number sequence, you convert each digit to its corresponding letter and then think of a peg word that starts with that letter. These peg words are then linked together in a story.",
+    strengths: "Simple and straightforward to learn. It provides a consistent structure for remembering short lists or sequences of numbers. The concrete objects are easy to visualize.",
+    examples: [
+      { number: '1 = A', explanation: "Peg word could be 'Ape' or 'Apple'." },
+      { number: '2 = B', explanation: "Peg word could be 'Bee' or 'Bat'." },
+      { number: '3 = C', explanation: "Peg word could be 'Cat' or 'Car'." },
+      { number: '312', explanation: "C-A-B. Imagine a **C**at driving an **A**pple-shaped **B**us." },
+    ],
+  },
 ];

@@ -96,17 +96,22 @@ const App: React.FC = () => {
 
         // System Mastery
         const numPracticeModes = Object.values(PracticeMode).length;
-        const systemToAchievementId: Record<MnemonicSystem, string> = {
+        const systemToAchievementId: Record<string, string> = {
             [MnemonicSystem.Major]: 'major-master',
             [MnemonicSystem.Dominic]: 'dominic-master',
             [MnemonicSystem.NumberRhyme]: 'number-rhyme-master',
             [MnemonicSystem.NumberShape]: 'number-shape-master',
+            [MnemonicSystem.PAO]: 'pao-master',
+            [MnemonicSystem.AlphabetPeg]: 'alphabet-peg-master',
         };
 
         for (const system of Object.values(MnemonicSystem)) {
             const completedModes = userStats.completedPractices[system] || [];
             if (completedModes.length >= numPracticeModes) {
-                unlock(systemToAchievementId[system]);
+                const achievementId = systemToAchievementId[system];
+                if (achievementId) {
+                    unlock(achievementId);
+                }
             }
         }
 

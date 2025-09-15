@@ -138,7 +138,7 @@ const MemorizeModal: React.FC<MemorizeModalProps> = ({ isOpen, onClose, numberTo
                 </div>
                 
                 {/* System Selection Tabs */}
-                <div className="flex-shrink-0 grid grid-cols-2 sm:grid-cols-4 gap-2 p-4 bg-slate-900/50">
+                <div className="flex-shrink-0 grid grid-cols-2 sm:grid-cols-3 gap-2 p-4 bg-slate-900/50">
                     {Object.values(MnemonicSystem).map(system => {
                         const isSelected = selectedSystem === system;
                         return (

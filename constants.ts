@@ -35,4 +35,16 @@ export const MNEMONIC_SYSTEMS = [
     description: 'Link numbers to objects that have a similar shape.',
     icon: '🎨',
   },
+  {
+    id: MnemonicSystem.PAO,
+    title: 'The PAO System',
+    description: 'Use Person-Action-Object sets to encode number triplets.',
+    icon: '🎬',
+  },
+  {
+    id: MnemonicSystem.AlphabetPeg,
+    title: 'Alphabet Peg System',
+    description: 'Link numbers to alphabet letters to create peg words.',
+    icon: '🔤',
+  },
 ];
