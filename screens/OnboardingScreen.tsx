@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { MnemonicSystem } from '../types';
+import { validateMnemonicAnswer } from '../services/geminiService';
 
 interface OnboardingScreenProps {
   onComplete: () => void;
@@ -74,6 +76,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
       case 8:
         return <MajorSystemExplanationStep onNext={handleNextStep} />;
       case 9:
+        return <InteractiveMajorSystemStep onNext={handleNextStep} />;
+      case 10:
         return <FinalStep onComplete={onComplete} />;
       default:
         return <WelcomeStep onNext={handleNextStep} />;
@@ -252,6 +256,78 @@ const MajorSystemExplanationStep: React.FC<{ onNext: () => void }> = ({ onNext }
       </button>
     </div>
 );
+
+const InteractiveMajorSystemStep: React.FC<{ onNext: () => void }> = ({ onNext }) => {
+    const [userInput, setUserInput] = useState('');
+    const [feedback, setFeedback] = useState<{ type: 'correct' | 'incorrect' | 'info'; message: string } | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const number = "34";
+    const sounds = "M - R";
+
+    const handleCheckWord = async () => {
+        if (!userInput.trim()) {
+            setFeedback({ type: 'info', message: "Please enter a word." });
+            return;
+        }
+        setIsLoading(true);
+        setFeedback(null);
+        
+        try {
+            const isCorrect = await validateMnemonicAnswer(MnemonicSystem.Major, number, userInput);
+            if (isCorrect) {
+                setFeedback({ type: 'correct', message: `Perfect! "${userInput}" is a great choice!` });
+                setTimeout(onNext, 2000);
+            } else {
+                setFeedback({ type: 'incorrect', message: `Not quite. Remember, we need the 'm' and 'r' sounds. Think "MoRe", "MooR", "MaRia".` });
+            }
+        } catch (error) {
+            console.error(error);
+            setFeedback({ type: 'incorrect', message: "Sorry, couldn't check the word right now." });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const getFeedbackClass = () => {
+        if (!feedback) return '';
+        switch (feedback.type) {
+            case 'correct': return 'text-green-400';
+            case 'incorrect': return 'text-red-400';
+            case 'info': return 'text-slate-400';
+            default: return '';
+        }
+    };
+    
+    return (
+        <div className="animate-fadeIn">
+            <h2 className="text-3xl font-bold text-white mb-4">Your Turn!</h2>
+            <p className="text-lg text-slate-300 mb-6">Let's try the Major System with the number below.</p>
+            <div className="bg-slate-800 rounded-xl p-8 mb-6 text-center">
+                <p className="text-8xl font-extrabold tracking-widest text-white">{number}</p>
+                <p className="text-2xl font-semibold text-cyan-400 mt-4">Sounds: {sounds}</p>
+            </div>
+             <p className="text-slate-400 mb-4">Type a word that uses these sounds. Remember, vowels don't count!</p>
+            <input
+                type="text"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                placeholder="e.g., MoRe"
+                className="w-full bg-slate-700 border-2 border-slate-600 text-white text-center text-lg p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
+            />
+            <button
+                onClick={handleCheckWord}
+                disabled={isLoading}
+                className="w-full mt-4 bg-purple-600 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-purple-500 transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"
+            >
+                {isLoading ? 'Checking...' : 'Check My Word'}
+            </button>
+            <div className={`h-12 mt-4 text-center font-semibold transition-opacity duration-300 ${feedback ? 'opacity-100' : 'opacity-0'}`}>
+                {feedback && <p className={getFeedbackClass()}>{feedback.message}</p>}
+            </div>
+        </div>
+    );
+};
 
 const FinalStep: React.FC<{ onComplete: () => void }> = ({ onComplete }) => (
     <div className="animate-fadeIn">

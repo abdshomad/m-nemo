@@ -9,18 +9,26 @@ interface SystemCardProps {
   system: { id: MnemonicSystem; title: string; description: string; icon: string; };
   onSelectPractice: (system: MnemonicSystem) => void;
   onStartTutorial: (system: MnemonicSystem) => void;
+  onShowDetails: (system: MnemonicSystem) => void;
   isCompleted: boolean;
   isTutorialCompleted: boolean;
 }
 
-const SystemCard: React.FC<SystemCardProps> = ({ system, onSelectPractice, onStartTutorial, isCompleted, isTutorialCompleted }) => (
+const SystemCard: React.FC<SystemCardProps> = ({ system, onSelectPractice, onStartTutorial, onShowDetails, isCompleted, isTutorialCompleted }) => (
   <div className={`relative bg-slate-800 rounded-xl p-6 flex flex-col justify-between shadow-lg transform hover:-translate-y-1 transition-all duration-300 ${isCompleted ? 'border border-green-500/50' : 'border border-transparent'}`}>
     {isTutorialCompleted && (
         <div className="absolute top-3 right-3 bg-cyan-500 text-slate-900 rounded-full h-6 w-6 flex items-center justify-center font-bold text-sm shadow-md" title="Tutorial Completed">
             🎓
         </div>
     )}
-    <div>
+    <div 
+        className="cursor-pointer"
+        onClick={() => onShowDetails(system.id)}
+        role="button"
+        tabIndex={0}
+        onKeyPress={(e) => e.key === 'Enter' && onShowDetails(system.id)}
+        aria-label={`Learn more about ${system.title}`}
+    >
       <div className="text-4xl mb-4">{system.icon}</div>
       <h3 className="text-xl font-bold text-white mb-2">{system.title}</h3>
       <p className="text-slate-400 mb-6 h-12">{system.description}</p>
@@ -52,6 +60,8 @@ interface LearnScreenProps {
 const LearnScreen: React.FC<LearnScreenProps> = ({ onStartPractice, onStartTutorial, completedSystems, completedTutorials }) => {
   const [isPracticeModalOpen, setIsPracticeModalOpen] = useState(false);
   const [selectedSystem, setSelectedSystem] = useState<MnemonicSystem | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedSystemDetails, setSelectedSystemDetails] = useState<SystemExplanation | null>(null);
 
   const handleSelectPractice = (system: MnemonicSystem) => {
     setSelectedSystem(system);
@@ -64,6 +74,14 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ onStartPractice, onStartTutor
     }
     setIsPracticeModalOpen(false);
     setSelectedSystem(null);
+  };
+
+  const handleShowDetails = (systemId: MnemonicSystem) => {
+    const systemInfo = SYSTEM_EXPLANATIONS.find(s => s.id === systemId);
+    if (systemInfo) {
+      setSelectedSystemDetails(systemInfo);
+      setIsDetailModalOpen(true);
+    }
   };
 
 
@@ -81,6 +99,7 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ onStartPractice, onStartTutor
             system={system} 
             onSelectPractice={handleSelectPractice} 
             onStartTutorial={onStartTutorial} 
+            onShowDetails={handleShowDetails}
             isCompleted={isCompleted} 
             isTutorialCompleted={isTutorialCompleted}
           />;
@@ -90,6 +109,11 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ onStartPractice, onStartTutor
         isOpen={isPracticeModalOpen}
         onClose={() => setIsPracticeModalOpen(false)}
         onStart={handleStartPractice}
+      />
+       <SystemDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        system={selectedSystemDetails}
       />
     </div>
   );
