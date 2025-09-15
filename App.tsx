@@ -5,7 +5,7 @@ import PracticeScreen from './screens/PracticeScreen';
 import StatsScreen from './screens/StatsScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import BottomNav from './components/BottomNav';
-import { MnemonicSystem, UserStats, Screen, Achievement } from './types';
+import { MnemonicSystem, UserStats, Screen, Achievement, PracticeMode } from './types';
 import { INITIAL_USER_STATS } from './constants';
 import { ACHIEVEMENT_DEFINITIONS, TOTAL_SYSTEMS } from './achievements';
 
@@ -13,12 +13,14 @@ const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>(Screen.Onboarding);
   const [userStats, setUserStats] = useState<UserStats>(INITIAL_USER_STATS);
   const [activeSystem, setActiveSystem] = useState<MnemonicSystem | null>(null);
+  const [activeMode, setActiveMode] = useState<PracticeMode | null>(null);
   const [achievements, setAchievements] = useState<Achievement[]>(() => 
     ACHIEVEMENT_DEFINITIONS.map(def => ({ ...def, unlocked: false }))
   );
 
-  const handlePracticeStart = useCallback((system: MnemonicSystem) => {
+  const handlePracticeStart = useCallback((system: MnemonicSystem, mode: PracticeMode) => {
     setActiveSystem(system);
+    setActiveMode(mode);
     setCurrentScreen(Screen.Practice);
   }, []);
 
@@ -99,7 +101,12 @@ const App: React.FC = () => {
       case Screen.Learn:
         return <LearnScreen onStartPractice={handlePracticeStart} />;
       case Screen.Practice:
-        return <PracticeScreen system={activeSystem || MnemonicSystem.Major} onComplete={handlePracticeComplete} />;
+        // Default to ConversionDrill if mode is somehow not set
+        return <PracticeScreen 
+                  system={activeSystem || MnemonicSystem.Major} 
+                  mode={activeMode || PracticeMode.ConversionDrill}
+                  onComplete={handlePracticeComplete} 
+                />;
       case Screen.Stats:
         return <StatsScreen stats={userStats} achievements={achievements} />;
       default:

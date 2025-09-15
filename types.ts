@@ -1,4 +1,3 @@
-
 export enum Screen {
   Onboarding = 'ONBOARDING',
   Home = 'HOME',
@@ -12,6 +11,11 @@ export enum MnemonicSystem {
   Dominic = 'Dominic System',
   NumberRhyme = 'Number Rhyme System',
   NumberShape = 'Number Shape System',
+}
+
+export enum PracticeMode {
+    ConversionDrill = 'Conversion Drill',
+    TimedChallenge = 'Timed Challenge',
 }
 
 export interface UserStats {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UserStats, Screen } from '../types';
 
@@ -46,7 +45,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ stats, navigate }) => {
           <span className="text-2xl">→</span>
         </button>
         <button 
-          onClick={() => navigate(Screen.Practice)}
+          onClick={() => navigate(Screen.Learn)}
           className="w-full text-left flex items-center justify-between bg-slate-700 text-white font-bold p-6 rounded-lg shadow-lg hover:bg-slate-600 transition-transform transform hover:scale-105"
         >
           <span className="text-lg">Daily Practice</span>
