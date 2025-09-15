@@ -4,6 +4,7 @@ import LearnScreen from './screens/LearnScreen';
 import PracticeScreen from './screens/PracticeScreen';
 import StatsScreen from './screens/StatsScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
+import TutorialScreen from './screens/TutorialScreen';
 import BottomNav from './components/BottomNav';
 import { MnemonicSystem, UserStats, Screen, Achievement, PracticeMode, PracticeConfig } from './types';
 import { INITIAL_USER_STATS } from './constants';
@@ -13,6 +14,7 @@ const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>(Screen.Onboarding);
   const [userStats, setUserStats] = useState<UserStats>(INITIAL_USER_STATS);
   const [activeSystem, setActiveSystem] = useState<MnemonicSystem | null>(null);
+  const [tutorialSystem, setTutorialSystem] = useState<MnemonicSystem | null>(null);
   const [activeMode, setActiveMode] = useState<PracticeMode | null>(null);
   const [activeConfig, setActiveConfig] = useState<PracticeConfig>({ timeLimit: 60, digits: 3 });
   const [achievements, setAchievements] = useState<Achievement[]>(() => 
@@ -24,6 +26,24 @@ const App: React.FC = () => {
     setActiveMode(mode);
     setActiveConfig(config);
     setCurrentScreen(Screen.Practice);
+  }, []);
+
+  const handleStartTutorial = useCallback((system: MnemonicSystem) => {
+    setTutorialSystem(system);
+    setCurrentScreen(Screen.Tutorial);
+  }, []);
+
+  const handleTutorialComplete = useCallback((system: MnemonicSystem) => {
+    setUserStats(prevStats => {
+        if (prevStats.completedTutorials.includes(system)) {
+            return prevStats;
+        }
+        return {
+            ...prevStats,
+            completedTutorials: [...prevStats.completedTutorials, system]
+        };
+    });
+    setCurrentScreen(Screen.Learn);
   }, []);
 
   const handlePracticeComplete = useCallback((accuracy: number, speed: number) => {
@@ -126,7 +146,12 @@ const App: React.FC = () => {
       case Screen.Home:
         return <HomeScreen stats={userStats} navigate={setCurrentScreen} />;
       case Screen.Learn:
-        return <LearnScreen onStartPractice={handlePracticeStart} completedSystems={Object.keys(userStats.completedPractices) as MnemonicSystem[]} />;
+        return <LearnScreen 
+                  onStartPractice={handlePracticeStart} 
+                  onStartTutorial={handleStartTutorial}
+                  completedSystems={Object.keys(userStats.completedPractices) as MnemonicSystem[]}
+                  completedTutorials={userStats.completedTutorials}
+                />;
       case Screen.Practice:
         // Default to ConversionDrill if mode is somehow not set
         return <PracticeScreen 
@@ -137,6 +162,12 @@ const App: React.FC = () => {
                 />;
       case Screen.Stats:
         return <StatsScreen stats={userStats} achievements={achievements} />;
+      case Screen.Tutorial:
+        return <TutorialScreen 
+                 system={tutorialSystem!} 
+                 onComplete={handleTutorialComplete} 
+                 onStartPractice={handlePracticeStart} 
+               />;
       default:
         return <HomeScreen stats={userStats} navigate={setCurrentScreen} />;
     }
@@ -147,7 +178,7 @@ const App: React.FC = () => {
       <main className="flex-grow container mx-auto px-4 py-8">
         {renderScreen()}
       </main>
-      {currentScreen !== Screen.Onboarding && currentScreen !== Screen.Practice && (
+      {currentScreen !== Screen.Onboarding && currentScreen !== Screen.Practice && currentScreen !== Screen.Tutorial && (
         <BottomNav currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} />
       )}
     </div>

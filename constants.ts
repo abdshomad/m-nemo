@@ -8,6 +8,7 @@ export const INITIAL_USER_STATS: UserStats = {
   completedPractices: {
     [MnemonicSystem.Major]: [PracticeMode.ConversionDrill],
   },
+  completedTutorials: [],
 };
 
 export const MNEMONIC_SYSTEMS = [

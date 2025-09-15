@@ -4,6 +4,7 @@ export enum Screen {
   Learn = 'LEARN',
   Practice = 'PRACTICE',
   Stats = 'STATS',
+  Tutorial = 'TUTORIAL',
 }
 
 export enum MnemonicSystem {
@@ -33,6 +34,7 @@ export interface UserStats {
   completedPractices: {
     [key in MnemonicSystem]?: PracticeMode[];
   };
+  completedTutorials: MnemonicSystem[];
 }
 
 export interface Achievement {
