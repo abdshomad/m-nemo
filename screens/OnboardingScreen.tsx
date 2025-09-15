@@ -115,231 +115,202 @@ const ExplanationStep: React.FC<{ onNext: () => void }> = ({ onNext }) => (
         onClick={onNext}
         className="w-full bg-cyan-500 text-slate-900 font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105"
       >
-        Let's See It
+        Let's Start
       </button>
     </div>
 );
 
-const InteractiveShapeStep: React.FC<{ number: string; shapeEmoji: string; shapeName: string; onNext: () => void }> = ({ number, shapeEmoji, shapeName, onNext }) => {
-  const [revealed, setRevealed] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setRevealed(true), 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <div className="animate-fadeIn text-center">
-      <h2 className="text-3xl font-bold text-white mb-6">Let's connect a shape.</h2>
-      <div className="bg-slate-800 rounded-xl p-8 my-8 min-h-[200px] flex items-center justify-center space-x-8">
-        <p className="text-9xl font-extrabold text-white">{number}</p>
-        {revealed && (
-          <div className="flex items-center space-x-4 animate-fadeIn">
-            <p className="text-5xl">→</p>
-            <p className="text-8xl">{shapeEmoji}</p>
-          </div>
-        )}
-      </div>
-      {revealed && (
-        <p className="text-xl text-slate-300 mb-8 animate-fadeIn">
-          The number <span className="text-cyan-400 font-semibold">{number}</span> looks like a <span className="text-cyan-400 font-semibold">{shapeName}</span>.
-        </p>
-      )}
-      <button 
-        onClick={onNext}
-        disabled={!revealed}
-        className="w-full bg-cyan-500 text-slate-900 font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105 disabled:bg-slate-600 disabled:cursor-not-allowed"
-      >
-        I see it!
-      </button>
+const InteractiveShapeStep: React.FC<{ number: string; shapeEmoji: string; shapeName: string; onNext: () => void }> = ({ number, shapeEmoji, shapeName, onNext }) => (
+  <div className="animate-fadeIn text-center">
+    <h3 className="text-2xl font-bold text-white mb-4">See the Shape?</h3>
+    <div className="flex justify-center items-center space-x-8 mb-6">
+      <div className="text-8xl font-extrabold text-white">{number}</div>
+      <div className="text-4xl text-cyan-400">→</div>
+      <div className="text-8xl">{shapeEmoji}</div>
     </div>
-  );
-};
-
-interface QuizStepProps {
-    number: string;
-    question: string;
-    choices: { text: string; correct: boolean }[];
-    onCorrect: () => void;
-}
-
-const QuizStep: React.FC<QuizStepProps> = ({ number, question, choices, onCorrect }) => {
-    const [selected, setSelected] = useState<{ text: string; correct: boolean } | null>(null);
-    const [isRevealed, setIsRevealed] = useState(false);
-
-    const handleSelect = (choice: { text: string; correct: boolean }) => {
-        if (isRevealed) return;
-        
-        setSelected(choice);
-        setIsRevealed(true);
-
-        if (choice.correct) {
-            setTimeout(onCorrect, 1500);
-        } else {
-            setTimeout(() => {
-                setSelected(null);
-                setIsRevealed(false);
-            }, 1500);
-        }
-    };
-
-    const getButtonClass = (choice: { text: string; correct: boolean }) => {
-        if (!isRevealed) {
-            return 'bg-slate-700 hover:bg-slate-600';
-        }
-        if (choice.text === selected?.text) {
-            return choice.correct ? 'bg-green-500' : 'bg-red-500 animate-shake';
-        }
-        return 'bg-slate-700 opacity-50';
-    };
-
-    return (
-        <div className="animate-fadeIn">
-            <div className="bg-slate-800 rounded-xl p-8 mb-6">
-                <p className="text-slate-400 mb-2">{question}</p>
-                <p className="text-8xl font-extrabold tracking-widest text-white">{number}</p>
-            </div>
-            <div className="space-y-4">
-                {choices.map(choice => (
-                    <button
-                        key={choice.text}
-                        onClick={() => handleSelect(choice)}
-                        disabled={isRevealed}
-                        className={`w-full text-white font-bold p-4 rounded-lg text-lg transition-all duration-300 ${getButtonClass(choice)}`}
-                    >
-                        {choice.text}
-                    </button>
-                ))}
-            </div>
-            <div className="h-8 mt-4 text-slate-300">
-                {isRevealed && selected?.correct && <p>Exactly! ✨</p>}
-                {isRevealed && !selected?.correct && <p>Not quite, try again!</p>}
-            </div>
-        </div>
-    );
-};
-
-const TransitionStep: React.FC<{ onNext: () => void }> = ({ onNext }) => (
-  <div className="animate-fadeIn">
-    <h2 className="text-4xl font-bold text-white mb-4">You've got it! ✨</h2>
-    <p className="text-xl text-slate-300 mb-8">See? By connecting numbers to shapes, you're already using a mnemonic system. Now, let's see what else is possible.</p>
-    <button 
+    <p className="text-xl text-slate-300 mb-8">The number <span className="font-bold text-cyan-400">{number}</span> looks like a <span className="font-bold text-cyan-400">{shapeName}</span>.</p>
+    <button
       onClick={onNext}
-      className="w-full bg-purple-600 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-purple-500 transition-all duration-300 transform hover:scale-105"
+      className="w-full bg-cyan-500 text-slate-900 font-bold py-3 px-6 rounded-lg text-lg hover:bg-cyan-400 transition-colors"
     >
-      Show Me More
+      I See It!
     </button>
   </div>
 );
 
+const QuizStep: React.FC<{ question: string; number: string; choices: {text: string, correct: boolean}[]; onCorrect: () => void }> = ({ question, number, choices, onCorrect }) => {
+  const [selected, setSelected] = useState<any | null>(null);
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  const handleSelect = (choice: any) => {
+    if (isRevealed) return;
+    setSelected(choice);
+    setIsRevealed(true);
+    if (choice.correct) {
+      setTimeout(onCorrect, 1500);
+    }
+  };
+
+  const getButtonClass = (choice: any) => {
+    if (!isRevealed) return 'bg-slate-700 hover:bg-slate-600';
+    if (choice.text === selected?.text) {
+      return choice.correct ? 'bg-green-500' : 'bg-red-500 animate-shake';
+    }
+    if (choice.correct) return 'bg-green-500/50';
+    return 'bg-slate-700 opacity-50';
+  };
+
+  return (
+    <div className="animate-fadeIn text-center">
+      <h3 className="text-2xl font-bold mb-4">{question}</h3>
+      <div className="bg-slate-800 rounded-xl p-4 mb-6 inline-block">
+        <p className="text-6xl font-extrabold text-white">{number}</p>
+      </div>
+      <div className="space-y-3 max-w-md mx-auto">
+        {choices.map((choice) => (
+          <button key={choice.text} onClick={() => handleSelect(choice)} disabled={isRevealed}
+            className={`w-full text-white font-bold p-4 rounded-lg text-lg transition-all duration-300 ${getButtonClass(choice)}`}>
+            {choice.text}
+          </button>
+        ))}
+      </div>
+      {isRevealed && selected?.correct && (
+        <p className="mt-4 text-green-400 animate-fadeIn">Correct! Moving on...</p>
+      )}
+      {isRevealed && !selected?.correct && (
+        <p className="mt-4 text-red-400 animate-fadeIn">Not quite. The correct answer is highlighted. Try to see the shape!</p>
+      )}
+    </div>
+  );
+};
+
+const TransitionStep: React.FC<{ onNext: () => void }> = ({ onNext }) => (
+  <div className="animate-fadeIn">
+    <h2 className="text-3xl font-bold text-white mb-4">Great Job!</h2>
+    <p className="text-lg text-slate-300 mb-6">You've just learned the basics of a simple mnemonic system.</p>
+    <p className="text-lg text-slate-300 mb-8">Now, let's level up to one of the most powerful systems: the <span className="text-cyan-400 font-semibold">Major System</span>.</p>
+    <button
+      onClick={onNext}
+      className="w-full bg-purple-600 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-purple-500 transition-all duration-300 transform hover:scale-105"
+    >
+      Let's Do It
+    </button>
+  </div>
+);
 
 const MajorSystemExplanationStep: React.FC<{ onNext: () => void }> = ({ onNext }) => (
-    <div className="animate-fadeIn">
-      <h2 className="text-3xl font-bold text-white mb-4">Ready for Something More Powerful?</h2>
-      <p className="text-lg text-slate-300 mb-6">That was just a warm-up! Systems like the <span className="text-cyan-400 font-semibold">Major System</span> let you memorize long numbers by converting them into sounds to form words.</p>
-      <div className="bg-slate-800 rounded-xl p-6 my-8 text-left">
-        <p className="text-slate-400">For example, with the Major System:</p>
-        <ul className="list-disc list-inside mt-4 space-y-2 text-white">
-            <li>The number <span className="font-bold text-cyan-400">3</span> maps to the 'm' sound.</li>
-            <li>The number <span className="font-bold text-cyan-400">4</span> maps to the 'r' sound.</li>
-        </ul>
-        <div className="mt-4 pt-4 border-t border-slate-700">
-             <p className="text-xl text-center">So, <span className="font-bold text-cyan-400 text-2xl">34</span> becomes <span className="font-bold text-cyan-400 text-2xl">M-R</span>, which you can remember as the word "MoRe" or "MaRia"!</p>
-        </div>
-      </div>
-      <p className="text-md text-slate-400 mb-8">You'll learn all about this and more in the app.</p>
-      <button 
-        onClick={onNext}
-        className="w-full bg-cyan-500 text-slate-900 font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105"
-      >
-        Sounds Interesting!
-      </button>
+  <div className="animate-fadeIn">
+    <h2 className="text-3xl font-bold text-white mb-4">The Major System: Sounds</h2>
+    <p className="text-lg text-slate-300 mb-6">This system converts numbers into <span className="font-semibold text-cyan-400">consonant sounds</span>. Then you use vowels to form words.</p>
+    <div className="bg-slate-800 p-4 rounded-lg text-left space-y-2 mb-8">
+      <p><span className="font-bold text-cyan-400 text-xl">3</span> → <span className="font-mono text-white">m</span> sound (think of 'm' having 3 downstrokes)</p>
+      <p><span className="font-bold text-cyan-400 text-xl">4</span> → <span className="font-mono text-white">r</span> sound (think 'fouR' ends with 'r')</p>
     </div>
+    <p className="text-lg text-slate-300 mb-8">So, the number <span className="font-mono text-cyan-400">34</span> becomes the sounds <span className="font-mono text-cyan-400">m-r</span>.</p>
+    <button
+      onClick={onNext}
+      className="w-full bg-cyan-500 text-slate-900 font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105"
+    >
+      Got It, Let's Try
+    </button>
+  </div>
 );
 
 const InteractiveMajorSystemStep: React.FC<{ onNext: () => void }> = ({ onNext }) => {
-    const [userInput, setUserInput] = useState('');
-    const [feedback, setFeedback] = useState<{ type: 'correct' | 'incorrect' | 'info'; message: string } | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+  const [answer, setAnswer] = useState('');
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-    const number = "34";
-    const sounds = "M - R";
+  const checkAnswer = async () => {
+    if (!answer.trim()) return;
+    setIsLoading(true);
+    setFeedback(null);
+    setError('');
+    try {
+      const isCorrect = await validateMnemonicAnswer(MnemonicSystem.Major, '34', answer);
+      if (isCorrect) {
+        setFeedback('correct');
+        setTimeout(onNext, 1500);
+      } else {
+        setFeedback('incorrect');
+        setError(`Not quite. '${answer}' doesn't fit the m-r sounds. Think 'MoRe' or 'MeeR'.`);
+        setTimeout(() => setFeedback(null), 2000);
+      }
+    } catch (e) {
+      setFeedback('incorrect');
+      setError('Could not validate answer. Please try again.');
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleCheckWord = async () => {
-        if (!userInput.trim()) {
-            setFeedback({ type: 'info', message: "Please enter a word." });
-            return;
-        }
-        setIsLoading(true);
-        setFeedback(null);
-        
-        try {
-            const isCorrect = await validateMnemonicAnswer(MnemonicSystem.Major, number, userInput);
-            if (isCorrect) {
-                setFeedback({ type: 'correct', message: `Perfect! "${userInput}" is a great choice!` });
-                setTimeout(onNext, 2000);
-            } else {
-                setFeedback({ type: 'incorrect', message: `Not quite. Remember, we need the 'm' and 'r' sounds. Think "MoRe", "MooR", "MaRia".` });
-            }
-        } catch (error) {
-            console.error(error);
-            setFeedback({ type: 'incorrect', message: "Sorry, couldn't check the word right now." });
-        } finally {
-            setIsLoading(false);
-        }
-    };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+        checkAnswer();
+    }
+  };
 
-    const getFeedbackClass = () => {
-        if (!feedback) return '';
-        switch (feedback.type) {
-            case 'correct': return 'text-green-400';
-            case 'incorrect': return 'text-red-400';
-            case 'info': return 'text-slate-400';
-            default: return '';
-        }
-    };
-    
-    return (
-        <div className="animate-fadeIn">
-            <h2 className="text-3xl font-bold text-white mb-4">Your Turn!</h2>
-            <p className="text-lg text-slate-300 mb-6">Let's try the Major System with the number below.</p>
-            <div className="bg-slate-800 rounded-xl p-8 mb-6 text-center">
-                <p className="text-8xl font-extrabold tracking-widest text-white">{number}</p>
-                <p className="text-2xl font-semibold text-cyan-400 mt-4">Sounds: {sounds}</p>
+  const getDynamicInputClass = () => {
+    if (feedback === 'correct') return 'border-green-500 animate-pulse-green';
+    if (feedback === 'incorrect') return 'border-red-500 animate-shake';
+    return 'border-slate-600 focus:ring-2 focus:ring-cyan-500';
+  };
+
+  return (
+    <div className="animate-fadeIn text-center">
+      <h3 className="text-2xl font-bold text-white mb-4">Your Turn!</h3>
+      <p className="text-slate-300 mb-6">Suggest a word for the number <span className="font-bold text-cyan-400">34</span> using the sounds <span className="font-mono text-cyan-400">m</span> and <span className="font-mono text-cyan-400">r</span>.</p>
+      
+      <div className="bg-slate-800 rounded-xl p-6 mb-6">
+        <div className="flex justify-center items-baseline space-x-6">
+            <div>
+                <p className="text-6xl font-extrabold text-white">3</p>
+                <p className="text-2xl font-bold text-cyan-400 mt-1">m</p>
             </div>
-             <p className="text-slate-400 mb-4">Type a word that uses these sounds. Remember, vowels don't count!</p>
-            <input
-                type="text"
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="e.g., MoRe"
-                className="w-full bg-slate-700 border-2 border-slate-600 text-white text-center text-lg p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
-            />
-            <button
-                onClick={handleCheckWord}
-                disabled={isLoading}
-                className="w-full mt-4 bg-purple-600 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-purple-500 transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"
-            >
-                {isLoading ? 'Checking...' : 'Check My Word'}
-            </button>
-            <div className={`h-12 mt-4 text-center font-semibold transition-opacity duration-300 ${feedback ? 'opacity-100' : 'opacity-0'}`}>
-                {feedback && <p className={getFeedbackClass()}>{feedback.message}</p>}
+            <div>
+                <p className="text-6xl font-extrabold text-white">4</p>
+                <p className="text-2xl font-bold text-cyan-400 mt-1">r</p>
             </div>
         </div>
-    );
+      </div>
+
+      <input
+        type="text"
+        value={answer}
+        onChange={e => setAnswer(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="e.g., More"
+        className={`w-full max-w-xs mx-auto bg-slate-700 border-2 ${getDynamicInputClass()} text-white text-center text-2xl p-4 rounded-lg focus:outline-none transition-all duration-300`}
+      />
+      <button 
+        onClick={checkAnswer} 
+        disabled={isLoading || !answer.trim()}
+        className="w-full max-w-xs mx-auto mt-4 bg-cyan-500 text-slate-900 font-bold py-3 px-6 rounded-lg text-lg hover:bg-cyan-400 transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"
+      >
+        {isLoading ? 'Checking...' : 'Check Word'}
+      </button>
+
+      <div className="h-12 mt-2">
+        {error && !isLoading && <p className="text-red-400 text-sm animate-fadeIn">{error}</p>}
+        {feedback === 'correct' && <p className="text-green-400 text-sm animate-fadeIn">Perfect! You got it.</p>}
+      </div>
+    </div>
+  );
 };
 
 const FinalStep: React.FC<{ onComplete: () => void }> = ({ onComplete }) => (
-    <div className="animate-fadeIn">
-        <h2 className="text-4xl font-bold text-white mb-4">You're a Natural!</h2>
-        <p className="text-xl text-slate-300 mb-8">You've just taken your first step to mastering your memory. Continue learning and practicing to unlock your full potential.</p>
-        <button 
-          onClick={onComplete}
-          className="w-full bg-cyan-500 text-slate-900 font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105"
-        >
-          Start My Journey
-        </button>
-      </div>
+  <div className="animate-fadeIn">
+    <h1 className="text-5xl font-bold text-cyan-400 mb-4">You're Ready!</h1>
+    <p className="text-xl text-slate-300 mb-8">You've learned the core concepts. The journey to mastering your memory starts now. Explore, practice, and unlock your potential.</p>
+    <button
+      onClick={onComplete}
+      className="w-full bg-cyan-500 text-slate-900 font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105"
+    >
+      Enter the App
+    </button>
+  </div>
 );
 
 export default OnboardingScreen;
