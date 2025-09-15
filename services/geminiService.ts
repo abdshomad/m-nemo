@@ -100,47 +100,43 @@ export const getMnemonicHint = async (system: MnemonicSystem, number: string): P
 };
 
 const getMnemonicStorySystemPrompt = (system: MnemonicSystem, number: string, isExaggerated: boolean): string => {
-  let basePrompt = `You are a world-class mnemonic expert, specializing in making numbers unforgettable. A user wants to memorize the number: ${number}. Your task is to generate a creative and effective mnemonic using the ${system}. Be vivid, concise, and follow the JSON output format precisely.`;
+  let basePrompt = `You are a 'Mnemonic Grandmaster' and a master storyteller. Your mission is to transform a boring number, ${number}, into an unforgettable memory palace using the ${system}. The story must be potent, vivid, and sticky. Adhere strictly to the JSON output format.`;
 
   const storyInstruction = isExaggerated
-    ? "Create a wildly over-the-top, absurd, and comical story or image. Use extreme sensory details (sights, sounds, smells, feelings). Make it bizarre and unforgettable."
-    : "Create a short, absurd, and memorable story or image. Make it sensory and emotional.";
+    ? "Create a mind-bending, reality-warping, and explosively vivid story. This isn't just exaggerated; it's a scene from a surrealist blockbuster movie. Use cartoon physics, impossible scales, and overwhelming sensory details (what does it smell like? sound like?). Make the scene so bizarre and emotionally charged (hilarious, shocking, awe-inspiring) that it's physically impossible to forget."
+    : "Create a short, surprising, and sensory-rich story or image. Make it memorable by using unexpected combinations, a touch of humor, and clear visuals. It should be a little weird.";
 
   switch (system) {
     case MnemonicSystem.Major:
       return `${basePrompt}
       1.  **Breakdown**: Analyze the number according to the Major System's phonetic code (0=s/z, 1=t/d, 2=n, 3=m, 4=r, 5=l, 6=j/sh/ch, 7=k/g, 8=f/v, 9=p/b). Show the digit-to-sound mapping.
-      2.  **Word**: Form a single, common, and highly visual English word from the consonant sounds. Vowels and the letters w, h, y are free.
-      3.  **Story**: ${storyInstruction} This story should involve the generated word.`;
+      2.  **Word**: Form a single, common, and highly visual English word from the consonant sounds. Vowels and the letters w, h, y are free. Pick the most interesting word if multiple are possible.
+      3.  **Story**: ${storyInstruction} Bring the generated word to life in an unexpected and dynamic way.`;
     case MnemonicSystem.Dominic:
        return `${basePrompt}
       1.  **Breakdown**: Convert the number into pairs of digits, each pair forming initials based on the Dominic System (1=A, 2=B, 3=C, 4=D, 5=E, 6=S, 7=G, 8=H, 9=N, 0=O).
-      2.  **Word**: For each pair of initials, identify a famous person. Describe a distinct action associated with that person.
-      3.  **Story**: ${storyInstruction} This story should combine the person from the first pair with the action from the second pair (and so on) to create a single, unforgettable scene.`;
+      2.  **Word**: For each pair, identify a famous person and their unique action.
+      3.  **Story**: ${storyInstruction} Combine the person from the first pair with the action from the second (and so on). Describe the *moment* this bizarre combination happens, giving it a surprising context.`;
     case MnemonicSystem.NumberRhyme:
       return `${basePrompt}
-      1.  **Breakdown**: For each digit in the number, state its common rhyming word (e.g., 1=sun, 2=shoe, 3=tree).
-      2.  **Word**: This isn't a single word, but the sequence of rhyming objects. List them clearly.
-      3.  **Story**: ${storyInstruction} This story must weave the rhyming objects into a simple, linear narrative in the correct order.`;
+      1.  **Breakdown**: For each digit, state its common rhyming word (e.g., 1=sun, 2=shoe, 3=tree).
+      2.  **Word**: List the sequence of rhyming objects.
+      3.  **Story**: ${storyInstruction} Create a 'domino effect' story where each rhyming object directly and bizarrely interacts with the next in sequence.`;
     case MnemonicSystem.NumberShape:
       return `${basePrompt}
-      1.  **Breakdown**: For each digit in the number, describe the object it visually resembles (e.g., 2=swan, 8=snowman).
+      1.  **Breakdown**: For each digit, describe the object it visually resembles (e.g., 2=swan, 8=snowman).
       2.  **Word**: List the sequence of shape-objects.
-      3.  **Story**: ${storyInstruction} This story should connect the shape-objects in the correct sequence.`;
+      3.  **Story**: ${storyInstruction} Animate the shape-objects. Create a story where they interact in a physically interesting or impossible way.`;
     case MnemonicSystem.PAO:
         return `${basePrompt}
-      1.  **Breakdown**: Analyze the number by splitting it into pairs of digits from left to right. If the number has an odd number of digits, pad it with a leading zero (e.g., 123 becomes 01-23). For each pair, identify a Person, Action, or Object. Cycle through Person -> Action -> Object.
-          - For 2 digits (e.g., 42): Identify a Person.
-          - For 4 digits (e.g., 42-87): Identify Person(42) and Action(87).
-          - For 6 digits (e.g., 42-87-13): Identify Person(42), Action(87), and Object(13).
-          - For more than 6 digits, start a new scene.
+      1.  **Breakdown**: Analyze the number by splitting it into pairs of digits (e.g., 12-34-56). If there's an odd number of digits, pad with a leading zero. For each pair, identify a Person, Action, or Object, cycling through P -> A -> O.
       2.  **Word**: List the chosen Person, Action, and/or Object.
-      3.  **Story**: ${storyInstruction} Combine the elements into a single, vivid scene. For P-A, the person performs the action. For P-A-O, the person performs the action on the object.`;
+      3.  **Story**: ${storyInstruction} Combine the elements into a single, vivid scene. Invent a tiny, bizarre backstory for *why* this person is doing this action to this object to make it stick.`;
     case MnemonicSystem.AlphabetPeg:
         return `${basePrompt}
-      1.  **Breakdown**: Convert each digit of the number into its corresponding letter of the alphabet (1=A, 2=B, 3=C, ... 9=I, 0=J/Z).
-      2.  **Word**: For each letter, create a simple, highly visual peg word that starts with that letter. List the sequence of peg words.
-      3.  **Story**: ${storyInstruction} Weave the peg words together in the correct order to form a short narrative or a single ridiculous image.`;
+      1.  **Breakdown**: Convert each digit into its corresponding alphabet letter (1=A, 2=B, 3=C, ... 9=I, 0=J/Z).
+      2.  **Word**: For each letter, create a simple, highly visual peg word. List the sequence of peg words.
+      3.  **Story**: ${storyInstruction} Weave the peg words into a surreal mini-fable or a nonsensical proverb. The connection between them should be clever and funny.`;
     default:
       return `Generate a memorable story for the number ${number}.`;
   }
@@ -175,7 +171,7 @@ export const generateMnemonicStory = async (system: MnemonicSystem, number: stri
                     },
                     required: ["breakdown", "word", "story"]
                 },
-                temperature: isExaggerated ? 0.9 : 0.8,
+                temperature: isExaggerated ? 1.0 : 0.8,
             },
         });
         

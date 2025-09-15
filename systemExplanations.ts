@@ -77,13 +77,14 @@ export const SYSTEM_EXPLANATIONS: SystemExplanation[] = [
   {
     id: MnemonicSystem.AlphabetPeg,
     title: 'Alphabet Peg System',
-    howItWorks: "The Alphabet Peg system links numbers to letters of the alphabet (e.g., 1=A, 2=B, 3=C, etc.). To remember a number sequence, you convert each digit to its corresponding letter and then think of a peg word that starts with that letter. These peg words are then linked together in a story.",
-    strengths: "Simple and straightforward to learn. It provides a consistent structure for remembering short lists or sequences of numbers. The concrete objects are easy to visualize.",
+    howItWorks: "The Alphabet Peg system links numbers to letters of the alphabet based on their position (e.g., 1=A, 2=B, 3=C). For each letter, you pre-memorize a concrete 'peg word' that starts with it (A=Apple, B=Ball). To remember a number sequence, you convert each digit to its corresponding letter, retrieve your peg word, and then link these peg words together in a memorable story or image.",
+    strengths: "Very simple and straightforward to learn, making it ideal for beginners. It provides a consistent and ordered structure for remembering short lists (up to 10 items) or sequences of numbers. The concrete peg words are easy to visualize and link together.",
     examples: [
-      { number: '1 = A', explanation: "Peg word could be 'Ape' or 'Apple'." },
-      { number: '2 = B', explanation: "Peg word could be 'Bee' or 'Bat'." },
-      { number: '3 = C', explanation: "Peg word could be 'Cat' or 'Car'." },
-      { number: '312', explanation: "C-A-B. Imagine a **C**at driving an **A**pple-shaped **B**us." },
+      { number: '1 = A', explanation: "Peg word could be 'Apple'." },
+      { number: '2 = B', explanation: "Peg word could be 'Bee'." },
+      { number: '3 = C', explanation: "Peg word could be 'Cat'." },
+      { number: '8 = H', explanation: "Peg word could be 'Hat'." },
+      { number: '312', explanation: "Think C-A-B. You could visualize a **C**at wearing an **A**pple on its head while being chased by a **B**ee." },
     ],
   },
 ];
