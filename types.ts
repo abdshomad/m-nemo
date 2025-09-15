@@ -16,6 +16,7 @@ export enum MnemonicSystem {
 export enum PracticeMode {
     ConversionDrill = 'Conversion Drill',
     TimedChallenge = 'Timed Challenge',
+    NumberAssociation = 'Number Association',
 }
 
 export interface PracticeConfig {

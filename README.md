@@ -1,4 +1,3 @@
-
 # M Nemo - Master Your Memory
 
 M Nemo is an interactive web application designed to help users learn and master popular mnemonic systems for remembering numbers. Through engaging, game-like tutorials and customizable practice drills, users can unlock the power of their memory.
@@ -12,10 +11,10 @@ M Nemo is an interactive web application designed to help users learn and master
   - Number Rhyme System
   - Number Shape System
 - **Visual Progress Tracking**: Completed systems are visually marked with a checkmark and a distinct style, giving users a clear sense of accomplishment.
-- **Dual Practice Modes**:
+- **Customizable Practice Modes**:
   - **Conversion Drill**: A race against the clock to convert randomly generated numbers into memorable words or phrases based on the chosen system.
   - **Timed Challenge**: A two-phase memory test where users first memorize a long sequence of digits and then recall it from memory.
-- **Customizable Sessions**: Users can tailor their practice by adjusting the **time limit** and the **number of digits** to match their skill level.
+  - **Number Association**: A rapid-fire drill to solidify the core 0-9 associations for any system, with AI-powered answer validation.
 - **AI-Powered Hints**: Powered by the Google Gemini API, users can request context-aware hints during practice drills to help them when they're stuck.
 - **Comprehensive Stats Dashboard**:
   - View key metrics like Daily Streak, overall Accuracy, and Speed (Digits Per Minute).

@@ -49,6 +49,10 @@ const PracticeModeModal: React.FC<PracticeModeModalProps> = ({ isOpen, onClose, 
                         <h3 className="font-bold text-cyan-400">Timed Challenge</h3>
                         <p className="text-sm text-slate-300">Memorize and recall a long number sequence.</p>
                     </button>
+                    <button onClick={() => setSelectedMode(PracticeMode.NumberAssociation)} className={modeButtonClass(PracticeMode.NumberAssociation)}>
+                        <h3 className="font-bold text-cyan-400">Number Association</h3>
+                        <p className="text-sm text-slate-300">Quickly drill the core associations for numbers 0-9.</p>
+                    </button>
                 </div>
 
                 {/* Customization Section */}

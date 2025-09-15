@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { MnemonicSystem } from '../types';
 
@@ -17,6 +16,34 @@ const getSystemPrompt = (system: MnemonicSystem, number: string): string => {
   }
 };
 
+export const validateMnemonicAnswer = async (system: MnemonicSystem, number: string, answer: string): Promise<boolean> => {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+        console.warn("API_KEY environment variable not set. Using mock validation.");
+        return answer.trim().length > 0;
+    }
+
+    try {
+        const ai = new GoogleGenAI({ apiKey });
+        const prompt = `Using the ${system}, is "${answer}" a correct and common mnemonic association for the number ${number}? Vowels are free and don't count in systems like the Major system. Answer with only "YES" or "NO".`;
+
+        const response: GenerateContentResponse = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                temperature: 0.1,
+                thinkingConfig: { thinkingBudget: 0 },
+            },
+        });
+        
+        const text = response.text.trim().toUpperCase();
+        return text.includes('YES');
+
+    } catch (error) {
+        console.error(`Error validating answer with Gemini for number ${number}:`, error);
+        return answer.trim().length > 0;
+    }
+};
 
 export const getMnemonicHint = async (system: MnemonicSystem, number: string): Promise<string> => {
   // This check is important because process.env is not available in all client-side environments.
