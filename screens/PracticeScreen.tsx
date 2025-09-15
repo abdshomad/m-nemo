@@ -37,6 +37,7 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [totalAttempts, setTotalAttempts] = useState(0);
     const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+    const [charFeedback, setCharFeedback] = useState<'correct' | 'incorrect' | null>(null);
     const [hint, setHint] = useState<string>('');
     const [isHintLoading, setIsHintLoading] = useState(false);
 
@@ -69,6 +70,30 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
         }, 1000);
     }, [userInput, config.digits]);
     
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        const previousValue = userInput;
+        setUserInput(value);
+
+        // Only provide feedback when adding characters, not deleting
+        if (value.length > previousValue.length) {
+            const lastChar = value.slice(-1);
+            // This is a simplified validation for demonstrating the UI effect.
+            // A real implementation would require complex logic for each mnemonic system.
+            // Here, we assume valid characters for a mnemonic word are letters.
+            if (/[a-zA-Z]/.test(lastChar)) {
+                setCharFeedback('correct');
+            } else {
+                setCharFeedback('incorrect');
+            }
+
+            // Reset the feedback after a short duration
+            setTimeout(() => {
+                setCharFeedback(null);
+            }, 400);
+        }
+    };
+
     const handleGetHint = async () => {
         if (!currentNumber || isHintLoading) return;
         setIsHintLoading(true);
@@ -90,10 +115,17 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
         return <FinishScreen accuracy={accuracy} speed={Math.round(speed)} onComplete={onComplete} />;
     }
 
-    const getFeedbackColor = () => {
+    const getDynamicInputClass = () => {
+        // Prioritize transient feedback while typing
+        if (charFeedback === 'correct') return 'border-green-500';
+        if (charFeedback === 'incorrect') return 'border-red-500';
+        
+        // Persistent feedback after clicking "Check"
         if (feedback === 'correct') return 'border-green-500';
         if (feedback === 'incorrect') return 'border-red-500';
-        return 'border-slate-600';
+
+        // Default and focus states
+        return 'border-slate-600 focus:ring-2 focus:ring-cyan-500';
     };
 
     return (
@@ -109,9 +141,9 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
             <input
                 type="text"
                 value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
+                onChange={handleInputChange}
                 placeholder="Type your mnemonic word..."
-                className={`w-full bg-slate-700 border-2 ${getFeedbackColor()} text-white text-center text-lg p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors`}
+                className={`w-full bg-slate-700 border-2 ${getDynamicInputClass()} text-white text-center text-lg p-4 rounded-lg focus:outline-none transition-colors duration-200`}
             />
             <button
                 onClick={handleCheckAnswer}
