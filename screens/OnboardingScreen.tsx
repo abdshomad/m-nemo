@@ -42,6 +42,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           onCorrect={handleNextStep}
         />;
       case 4:
+        return <MajorSystemExplanationStep onNext={handleNextStep} />;
+      case 5:
         return <FinalStep onComplete={onComplete} />;
       default:
         return <WelcomeStep onNext={handleNextStep} />;
@@ -151,6 +153,29 @@ const QuizStep: React.FC<QuizStepProps> = ({ number, question, choices, onCorrec
     );
 };
 
+const MajorSystemExplanationStep: React.FC<{ onNext: () => void }> = ({ onNext }) => (
+    <div className="animate-fadeIn">
+      <h2 className="text-3xl font-bold text-white mb-4">Ready for Something More Powerful?</h2>
+      <p className="text-lg text-slate-300 mb-6">That was just a warm-up! Systems like the <span className="text-cyan-400 font-semibold">Major System</span> let you memorize long numbers by converting them into sounds to form words.</p>
+      <div className="bg-slate-800 rounded-xl p-6 my-8 text-left">
+        <p className="text-slate-400">For example, with the Major System:</p>
+        <ul className="list-disc list-inside mt-4 space-y-2 text-white">
+            <li>The number <span className="font-bold text-cyan-400">3</span> maps to the 'm' sound.</li>
+            <li>The number <span className="font-bold text-cyan-400">4</span> maps to the 'r' sound.</li>
+        </ul>
+        <div className="mt-4 pt-4 border-t border-slate-700">
+             <p className="text-xl text-center">So, <span className="font-bold text-cyan-400 text-2xl">34</span> becomes <span className="font-bold text-cyan-400 text-2xl">M-R</span>, which you can remember as the word "MoRe" or "MaRia"!</p>
+        </div>
+      </div>
+      <p className="text-md text-slate-400 mb-8">You'll learn all about this and more in the app.</p>
+      <button 
+        onClick={onNext}
+        className="w-full bg-cyan-500 text-slate-900 font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105"
+      >
+        Sounds Interesting!
+      </button>
+    </div>
+);
 
 const FinalStep: React.FC<{ onComplete: () => void }> = ({ onComplete }) => (
     <div className="animate-fadeIn">
