@@ -9,6 +9,15 @@ interface MemorizeModalProps {
     numberToMemorize: string;
 }
 
+const getSystemShortName = (system: MnemonicSystem): string => {
+    switch (system) {
+        case MnemonicSystem.NumberRhyme: return 'Rhyme';
+        case MnemonicSystem.NumberShape: return 'Shape';
+        case MnemonicSystem.AlphabetPeg: return 'Alphabet';
+        default: return system.replace(' System', '');
+    }
+};
+
 const ExaggerateToggle: React.FC<{ checked: boolean; onChange: (checked: boolean) => void }> = ({ checked, onChange }) => (
     <div className="flex items-center space-x-2">
         <span className={`font-semibold text-sm transition-colors ${checked ? 'text-purple-400' : 'text-slate-400'}`}>
@@ -149,7 +158,7 @@ const MemorizeModal: React.FC<MemorizeModalProps> = ({ isOpen, onClose, numberTo
                                     isSelected ? 'bg-cyan-500 text-slate-900' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                                 }`}
                             >
-                                {system.replace(' System', '')}
+                                {getSystemShortName(system)}
                             </button>
                         );
                     })}

@@ -129,9 +129,13 @@ const getMnemonicStorySystemPrompt = (system: MnemonicSystem, number: string, is
       3.  **Story**: ${storyInstruction} This story should connect the shape-objects in the correct sequence.`;
     case MnemonicSystem.PAO:
         return `${basePrompt}
-      1.  **Breakdown**: Analyze the number by splitting it into pairs of digits (e.g., 12-34-56). Handle odd-length numbers by padding with a 0 at the start. State the Person for the first pair, Action for the second, and Object for the third.
-      2.  **Word**: List the Person, Action, and Object that you've chosen.
-      3.  **Story**: ${storyInstruction} This story must combine the Person, Action, and Object into a single, cohesive, and bizarre scene. The person from the first pair performs the action from the second pair on the object from the third pair.`;
+      1.  **Breakdown**: Analyze the number by splitting it into pairs of digits from left to right. If the number has an odd number of digits, pad it with a leading zero (e.g., 123 becomes 01-23). For each pair, identify a Person, Action, or Object. Cycle through Person -> Action -> Object.
+          - For 2 digits (e.g., 42): Identify a Person.
+          - For 4 digits (e.g., 42-87): Identify Person(42) and Action(87).
+          - For 6 digits (e.g., 42-87-13): Identify Person(42), Action(87), and Object(13).
+          - For more than 6 digits, start a new scene.
+      2.  **Word**: List the chosen Person, Action, and/or Object.
+      3.  **Story**: ${storyInstruction} Combine the elements into a single, vivid scene. For P-A, the person performs the action. For P-A-O, the person performs the action on the object.`;
     case MnemonicSystem.AlphabetPeg:
         return `${basePrompt}
       1.  **Breakdown**: Convert each digit of the number into its corresponding letter of the alphabet (1=A, 2=B, 3=C, ... 9=I, 0=J/Z).
