@@ -6,6 +6,7 @@ export interface SystemExplanation {
   howItWorks: string;
   strengths: string;
   examples: { number: string; explanation: string }[];
+  visualAidUrl?: string;
 }
 
 export const SYSTEM_EXPLANATIONS: SystemExplanation[] = [
@@ -14,6 +15,7 @@ export const SYSTEM_EXPLANATIONS: SystemExplanation[] = [
     title: 'The Major System',
     howItWorks: 'The Major System is a phonetic system that works by converting numbers into consonant sounds, which can then be used to form words. Vowels (a, e, i, o, u) and the letters w, h, y are ignored and can be used as "fillers" to create sensible words. Each digit from 0-9 is associated with a specific sound.',
     strengths: 'Extremely powerful and flexible for remembering long sequences of numbers. Once mastered, you can create vivid images for any number combination, making them highly memorable.',
+    visualAidUrl: 'https://i.imgur.com/Q0Z5M5O.png',
     examples: [
       { number: '0 = s, z', explanation: "Sounds like the first letter of 'zero'." },
       { number: '1 = t, d', explanation: "A 't' has one downstroke." },
@@ -41,6 +43,7 @@ export const SYSTEM_EXPLANATIONS: SystemExplanation[] = [
     title: 'Number Rhyme System',
     howItWorks: 'This is a very simple system where you create a list of words that rhyme with the numbers one through nine (and often zero or ten). To remember a sequence, you create a story or image linking the rhyming words in order.',
     strengths: 'Very easy to learn and intuitive, making it a great starting point for beginners. It works well for short lists and numbers up to 5-10 digits long.',
+    visualAidUrl: 'https://i.imgur.com/rS4yF2a.gif',
     examples: [
       { number: '1', explanation: "rhymes with 'Sun' or 'Bun'." },
       { number: '2', explanation: "rhymes with 'Shoe' or 'Glue'." },
@@ -54,6 +57,7 @@ export const SYSTEM_EXPLANATIONS: SystemExplanation[] = [
     title: 'Number Shape System',
     howItWorks: 'Similar to the Number Rhyme system, this method involves associating each number with an object that visually resembles its shape. To remember a sequence, you link the shapes together in a memorable story.',
     strengths: 'Highly visual and creative, which can make memories very strong. Like the rhyme system, it is simple to learn and effective for shorter numbers.',
+    visualAidUrl: 'https://i.imgur.com/u8x3E4Y.gif',
     examples: [
       { number: '1', explanation: "looks like a 'Candle' or 'Spear'." },
       { number: '2', explanation: "looks like a 'Swan' or 'Snake'." },
@@ -79,6 +83,7 @@ export const SYSTEM_EXPLANATIONS: SystemExplanation[] = [
     title: 'Alphabet Peg System',
     howItWorks: "The Alphabet Peg system links numbers to letters of the alphabet based on their position (e.g., 1=A, 2=B, 3=C). For each letter, you pre-memorize a concrete 'peg word' that starts with it (A=Apple, B=Ball). To remember a number sequence, you convert each digit to its corresponding letter, retrieve your peg word, and then link these peg words together in a memorable story or image.",
     strengths: "Very simple and straightforward to learn, making it ideal for beginners. It provides a consistent and ordered structure for remembering short lists (up to 10 items) or sequences of numbers. The concrete peg words are easy to visualize and link together.",
+    visualAidUrl: 'https://i.imgur.com/sPAz0Qk.png',
     examples: [
       { number: '1 = A', explanation: "Peg word could be 'Apple'." },
       { number: '2 = B', explanation: "Peg word could be 'Bee'." },

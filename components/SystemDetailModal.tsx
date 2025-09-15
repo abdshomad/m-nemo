@@ -30,6 +30,17 @@ const SystemDetailModal: React.FC<SystemDetailModalProps> = ({ isOpen, onClose, 
                         <p>{system.howItWorks}</p>
                     </div>
                     
+                    {system.visualAidUrl && (
+                        <div className="my-4 flex justify-center bg-slate-900/50 rounded-lg p-2">
+                            <img 
+                                src={system.visualAidUrl} 
+                                alt={`${system.title} visual aid`} 
+                                className="rounded-md shadow-md max-w-full h-auto"
+                                loading="lazy"
+                            />
+                        </div>
+                    )}
+                    
                     <div>
                         <h3 className="font-semibold text-cyan-400 mb-2">Strengths</h3>
                         <p>{system.strengths}</p>
