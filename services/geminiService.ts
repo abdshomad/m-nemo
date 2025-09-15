@@ -2,24 +2,28 @@ import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { MnemonicSystem } from '../types';
 
 const getSystemPrompt = (system: MnemonicSystem, number: string): string => {
-  const basePrompt = `You are an expert mnemonic coach providing a concise, actionable hint. Be creative but keep it simple and common.`;
+  const basePrompt = `You are an expert mnemonic coach. Your task is to provide a single, creative, and common hint for a user trying to remember a number with a specific system. The hint must be concise (under 20 words) and directly actionable. Do not offer multiple options or long explanations.`;
   switch (system) {
     case MnemonicSystem.Major:
-      return `${basePrompt} Give a hint for the number ${number} using the Major System. 
-1. List the required consonant sounds for each digit in order (0=s/z, 1=t/d, 2=n, 3=m, 4=r, 5=l, 6=j/sh, 7=k/g, 8=f/v, 9=p/b).
-2. Suggest one common English word that fits those sounds. 
-3. Explain where you can insert vowels (a, e, i, o, u) to form the word. 
-For example, for 34, you would suggest: "Sounds: 'm', 'r'. You can add vowels to make 'MoRe' or 'MaRe'."`;
+      return `${basePrompt} Using the Major System phonetic code (0=s/z, 1=t/d, 2=n, 3=m, 4=r, 5=l, 6=j/sh, 7=k/g, 8=f/v, 9=p/b), provide a hint for the number ${number}.
+      Suggest one common English word that fits the consonant sounds.
+      Explain the mapping concisely.
+      Example for 34: "Think 'MoRe'. M=3, R=4."
+      Example for 927: "Think 'PiNK'. P=9, N=2, K=7."`;
     case MnemonicSystem.Dominic:
-      return `${basePrompt} Give a hint for the number ${number} using the Dominic System. 
-1. Convert the number into a pair of initials (1=A, 2=B, 3=C, 4=D, 5=E, 6=S, 7=G, 8=H, 9=N, 0=O). 
-2. Suggest a very specific, well-known person whose initials match. 
-3. Suggest a very concrete, simple action associated with that person.
-For example, for 15 (AE), you might suggest: "Initials: A.E. Person: Albert Einstein. Action: writing on a chalkboard."`;
+      return `${basePrompt} Using the Dominic System letter code (1=A, 2=B, 3=C, 4=D, 5=E, 6=S, 7=G, 8=H, 9=N, 0=O), provide a hint for the number ${number}.
+      Convert the number into initials (e.g., 15 -> AE).
+      Suggest a well-known person for the initials and a concrete action.
+      Example for 15 (AE): "Albert Einstein writing on a chalkboard."
+      Example for 07 (OG): "Oprah Winfrey giving away a car."`;
     case MnemonicSystem.NumberRhyme:
-      return `${basePrompt} Give a hint for the number ${number} using the Number Rhyme system. Suggest a simple, common word that rhymes with the final digit. For example, for 21, you might say: "One rhymes with 'sun'."`;
+      return `${basePrompt} Using the Number Rhyme system, suggest a simple object that rhymes with the final digit of ${number}.
+      Example for 21: "One rhymes with 'sun'."
+      Example for 8: "Eight rhymes with 'gate'."`;
     case MnemonicSystem.NumberShape:
-      return `${basePrompt} Give a hint for the number ${number} using the Number Shape system. Describe a simple object a digit looks like. For example, for a number ending in 2, you might say: "The 2 looks like a swan."`;
+       return `${basePrompt} Using the Number Shape system, describe a simple object that a digit in ${number} looks like.
+      Example for a number with 2: "The digit '2' looks like a swan."
+      Example for a number with 8: "The digit '8' looks like a snowman."`;
     default:
       return `Give me a creative way to remember the number ${number}.`;
   }
