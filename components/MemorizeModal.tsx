@@ -147,22 +147,29 @@ const MemorizeModal: React.FC<MemorizeModalProps> = ({ isOpen, onClose, numberTo
                 </div>
                 
                 {/* System Selection Tabs */}
-                <div className="flex-shrink-0 grid grid-cols-2 sm:grid-cols-3 gap-2 p-4 bg-slate-900/50">
-                    {Object.values(MnemonicSystem).map(system => {
-                        const isSelected = selectedSystem === system;
-                        return (
-                            <button 
-                                key={system}
-                                onClick={() => handleSystemChange(system)}
-                                className={`px-3 py-2 text-sm font-semibold rounded-md transition-colors ${
-                                    isSelected ? 'bg-cyan-500 text-slate-900' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                                }`}
-                            >
-                                {getSystemShortName(system)}
-                            </button>
-                        );
-                    })}
+                <div className="border-b border-slate-700 px-4 sm:px-6">
+                    <nav className="-mb-px flex space-x-4 sm:space-x-6 overflow-x-auto" aria-label="Mnemonic Systems">
+                        {Object.values(MnemonicSystem).map(system => {
+                            const isSelected = selectedSystem === system;
+                            return (
+                                <button
+                                    key={system}
+                                    onClick={() => handleSystemChange(system)}
+                                    role="tab"
+                                    aria-selected={isSelected}
+                                    className={`whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm transition-colors focus:outline-none ${
+                                        isSelected
+                                        ? 'border-cyan-400 text-cyan-400'
+                                        : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
+                                    }`}
+                                >
+                                    {getSystemShortName(system)}
+                                </button>
+                            );
+                        })}
+                    </nav>
                 </div>
+
 
                 {/* Content */}
                 <div className="p-6 overflow-y-auto flex-grow">
