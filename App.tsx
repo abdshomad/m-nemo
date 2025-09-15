@@ -99,7 +99,7 @@ const App: React.FC = () => {
       case Screen.Home:
         return <HomeScreen stats={userStats} navigate={setCurrentScreen} />;
       case Screen.Learn:
-        return <LearnScreen onStartPractice={handlePracticeStart} />;
+        return <LearnScreen onStartPractice={handlePracticeStart} completedSystems={userStats.completedLessons} />;
       case Screen.Practice:
         // Default to ConversionDrill if mode is somehow not set
         return <PracticeScreen 
