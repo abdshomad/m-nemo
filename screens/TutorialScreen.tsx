@@ -194,7 +194,7 @@ const SummaryStep: React.FC<{ step: any; onComplete: () => void; onPractice: () 
         <p className="text-slate-300 text-lg mb-8">{step.text}</p>
         <div className="flex flex-col space-y-3 max-w-xs mx-auto">
             <button onClick={onPractice} className="w-full bg-cyan-500 text-slate-900 font-bold py-3 px-6 rounded-lg text-lg hover:bg-cyan-400 transition-colors">Start Practice</button>
-            <button onClick={onComplete} className="w-full bg-slate-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-slate-500 transition-colors">Finish Tutorial</button>
+            <button onClick={onComplete} className="w-full bg-slate-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-slate-500 transition-colors">Go to Learning Hub</button>
         </div>
     </div>
 );
