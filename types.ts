@@ -18,6 +18,11 @@ export enum PracticeMode {
     TimedChallenge = 'Timed Challenge',
 }
 
+export interface PracticeConfig {
+  timeLimit: number; // in seconds
+  digits: number;    // number of digits for conversion drill
+}
+
 export interface UserStats {
   dailyStreak: number;
   accuracy: number;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MnemonicSystem, PracticeMode } from '../types';
+import { MnemonicSystem, PracticeMode, PracticeConfig } from '../types';
 import { MNEMONIC_SYSTEMS } from '../constants';
 import PracticeModeModal from '../components/PracticeModeModal';
 
@@ -31,7 +31,7 @@ const SystemCard: React.FC<SystemCardProps> = ({ system, onSelectPractice, isCom
 );
 
 interface LearnScreenProps {
-  onStartPractice: (system: MnemonicSystem, mode: PracticeMode) => void;
+  onStartPractice: (system: MnemonicSystem, mode: PracticeMode, config: PracticeConfig) => void;
   completedSystems: MnemonicSystem[];
 }
 
@@ -44,9 +44,9 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ onStartPractice, completedSys
     setIsModalOpen(true);
   };
 
-  const handleModeSelected = (mode: PracticeMode) => {
+  const handleStartPractice = (mode: PracticeMode, config: PracticeConfig) => {
     if (selectedSystem) {
-      onStartPractice(selectedSystem, mode);
+      onStartPractice(selectedSystem, mode, config);
     }
     setIsModalOpen(false);
     setSelectedSystem(null);
@@ -67,7 +67,7 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ onStartPractice, completedSys
       <PracticeModeModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSelectMode={handleModeSelected}
+        onStart={handleStartPractice}
       />
     </div>
   );

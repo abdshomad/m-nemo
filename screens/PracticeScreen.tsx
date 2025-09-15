@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { MnemonicSystem, PracticeMode } from '../types';
+import { MnemonicSystem, PracticeMode, PracticeConfig } from '../types';
 import { getMnemonicHint } from '../services/geminiService';
 
 const generateRandomNumber = (length: number): string => {
@@ -29,10 +29,10 @@ const FinishScreen: React.FC<{ accuracy: number; speed: number; onComplete: (acc
 );
 
 // --- Conversion Drill Mode ---
-const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy: number, speed: number) => void; }> = ({ system, onComplete }) => {
+const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy: number, speed: number) => void; config: PracticeConfig }> = ({ system, onComplete, config }) => {
     const [currentNumber, setCurrentNumber] = useState('');
     const [userInput, setUserInput] = useState('');
-    const [timer, setTimer] = useState(60);
+    const [timer, setTimer] = useState(config.timeLimit);
     const [isFinished, setIsFinished] = useState(false);
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [totalAttempts, setTotalAttempts] = useState(0);
@@ -41,7 +41,7 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
     const [isHintLoading, setIsHintLoading] = useState(false);
 
     useEffect(() => {
-        setCurrentNumber(generateRandomNumber(3));
+        setCurrentNumber(generateRandomNumber(config.digits));
         const interval = setInterval(() => {
             setTimer(prev => {
                 if (prev <= 1) {
@@ -53,7 +53,7 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
             });
         }, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [config.digits]);
 
     const handleCheckAnswer = useCallback(() => {
         const isCorrect = userInput.length > 2; // Simplified validation
@@ -65,9 +65,9 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
             setFeedback(null);
             setUserInput('');
             setHint('');
-            setCurrentNumber(generateRandomNumber(Math.floor(Math.random() * 2) + 3));
+            setCurrentNumber(generateRandomNumber(config.digits));
         }, 1000);
-    }, [userInput]);
+    }, [userInput, config.digits]);
     
     const handleGetHint = async () => {
         if (!currentNumber || isHintLoading) return;
@@ -86,8 +86,8 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
 
     if (isFinished) {
         const accuracy = totalAttempts > 0 ? Math.round((correctAnswers / totalAttempts) * 100) : 0;
-        const speed = correctAnswers * 3; // Approx DPM
-        return <FinishScreen accuracy={accuracy} speed={speed} onComplete={onComplete} />;
+        const speed = correctAnswers * (60 / config.timeLimit); // Digits per minute
+        return <FinishScreen accuracy={accuracy} speed={Math.round(speed)} onComplete={onComplete} />;
     }
 
     const getFeedbackColor = () => {
@@ -131,10 +131,10 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
 };
 
 // --- Timed Challenge Mode ---
-const TimedChallenge: React.FC<{ onComplete: (accuracy: number, speed: number) => void; }> = ({ onComplete }) => {
+const TimedChallenge: React.FC<{ onComplete: (accuracy: number, speed: number) => void; config: PracticeConfig }> = ({ onComplete, config }) => {
     const [phase, setPhase] = useState<'MEMORIZING' | 'RECALLING' | 'FINISHED'>('MEMORIZING');
     const [sequence] = useState(generateRandomNumber(30));
-    const [timer, setTimer] = useState(60);
+    const [timer, setTimer] = useState(config.timeLimit);
     const [recalledInput, setRecalledInput] = useState('');
     const [score, setScore] = useState({ accuracy: 0, speed: 0 });
 
@@ -213,17 +213,18 @@ const TimedChallenge: React.FC<{ onComplete: (accuracy: number, speed: number) =
 interface PracticeScreenProps {
     system: MnemonicSystem;
     mode: PracticeMode;
+    config: PracticeConfig;
     onComplete: (accuracy: number, speed: number) => void;
 }
 
-const PracticeScreen: React.FC<PracticeScreenProps> = ({ system, mode, onComplete }) => {
+const PracticeScreen: React.FC<PracticeScreenProps> = ({ system, mode, config, onComplete }) => {
     return (
         <div className="flex flex-col items-center justify-center h-full animate-fadeIn">
             {mode === PracticeMode.ConversionDrill && (
-                <ConversionDrill system={system} onComplete={onComplete} />
+                <ConversionDrill system={system} onComplete={onComplete} config={config} />
             )}
             {mode === PracticeMode.TimedChallenge && (
-                <TimedChallenge onComplete={onComplete} />
+                <TimedChallenge onComplete={onComplete} config={config} />
             )}
         </div>
     );
