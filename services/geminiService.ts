@@ -1,5 +1,5 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { MnemonicSystem } from '../types';
+import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
+import { MnemonicSystem, MnemonicStory } from '../types';
 
 const getSystemPrompt = (system: MnemonicSystem, number: string): string => {
   const basePrompt = `You are an expert mnemonic coach. Your task is to provide a single, creative, and common hint for a user trying to remember a number with a specific system. The hint must be concise (under 20 words) and directly actionable. Do not offer multiple options or long explanations.`;
@@ -59,9 +59,6 @@ export const validateMnemonicAnswer = async (system: MnemonicSystem, number: str
 };
 
 export const getMnemonicHint = async (system: MnemonicSystem, number: string): Promise<string> => {
-  // This check is important because process.env is not available in all client-side environments.
-  // In a real application, you'd handle this more robustly, likely by calling a backend server
-  // that securely stores and uses the API key. For this example, we'll proceed assuming it might exist.
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
     console.warn("API_KEY environment variable not set. Returning a mock hint.");
@@ -76,7 +73,6 @@ export const getMnemonicHint = async (system: MnemonicSystem, number: string): P
       model: 'gemini-2.5-flash',
       contents: prompt,
        config: {
-        // Disable thinking for low latency hint generation
         thinkingConfig: { thinkingBudget: 0 },
         temperature: 0.7,
       },
@@ -91,7 +87,82 @@ export const getMnemonicHint = async (system: MnemonicSystem, number: string): P
     return text.trim();
   } catch (error) {
     console.error(`Error fetching hint from Gemini for number ${number}:`, error);
-    // Return a user-friendly message instead of throwing an error
     return "Sorry, there was an issue getting a hint. Please check your connection and try again.";
   }
+};
+
+const getMnemonicStorySystemPrompt = (system: MnemonicSystem, number: string): string => {
+  const basePrompt = `You are a world-class mnemonic expert, specializing in making numbers unforgettable. A user wants to memorize the number: ${number}. Your task is to generate a creative and effective mnemonic using the ${system}. Be vivid, concise, and follow the JSON output format precisely.`;
+
+  switch (system) {
+    case MnemonicSystem.Major:
+      return `${basePrompt}
+      1.  **Breakdown**: Analyze the number according to the Major System's phonetic code (0=s/z, 1=t/d, 2=n, 3=m, 4=r, 5=l, 6=j/sh/ch, 7=k/g, 8=f/v, 9=p/b). Show the digit-to-sound mapping.
+      2.  **Word**: Form a single, common, and highly visual English word from the consonant sounds. Vowels and the letters w, h, y are free.
+      3.  **Story**: Create a short, absurd, and memorable story or image involving that word. Make it sensory and emotional.`;
+    case MnemonicSystem.Dominic:
+       return `${basePrompt}
+      1.  **Breakdown**: Convert the number into pairs of digits, each pair forming initials based on the Dominic System (1=A, 2=B, 3=C, 4=D, 5=E, 6=S, 7=G, 8=H, 9=N, 0=O).
+      2.  **Word**: For each pair of initials, identify a famous person. Describe a distinct action associated with that person.
+      3.  **Story**: Combine the person from the first pair with the action from the second pair (and so on) to create a single, bizarre, and unforgettable scene. If there's an odd number of digits, be creative with the last one.`;
+    case MnemonicSystem.NumberRhyme:
+      return `${basePrompt}
+      1.  **Breakdown**: For each digit in the number, state its common rhyming word (e.g., 1=sun, 2=shoe, 3=tree).
+      2.  **Word**: This isn't a single word, but the sequence of rhyming objects. List them clearly.
+      3.  **Story**: Weave the rhyming objects into a simple, linear story. The objects must appear in the correct order.`;
+    case MnemonicSystem.NumberShape:
+      return `${basePrompt}
+      1.  **Breakdown**: For each digit in the number, describe the object it visually resembles (e.g., 2=swan, 8=snowman).
+      2.  **Word**: List the sequence of shape-objects.
+      3.  **Story**: Create a vivid image or very short story that connects the shape-objects in the correct sequence.`;
+    default:
+      return `Generate a memorable story for the number ${number}.`;
+  }
+}
+
+export const generateMnemonicStory = async (system: MnemonicSystem, number: string): Promise<MnemonicStory> => {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+        console.warn("API_KEY environment variable not set. Using mock generation.");
+        return {
+            breakdown: `Mock breakdown for ${number} using ${system}`,
+            word: `Mock word`,
+            story: `This is a mock story because the API key is not configured.`
+        };
+    }
+
+    try {
+        const ai = new GoogleGenAI({ apiKey });
+        const prompt = getMnemonicStorySystemPrompt(system, number);
+        
+        const response: GenerateContentResponse = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        breakdown: { type: Type.STRING, description: 'The number broken down into its mnemonic components (e.g., "3(m) 1(t) 4(r)")' },
+                        word: { type: Type.STRING, description: 'The suggested mnemonic word(s) or person/action pairs.' },
+                        story: { type: Type.STRING, description: 'A short, vivid story or image to help remember the word(s).' }
+                    },
+                    required: ["breakdown", "word", "story"]
+                },
+                temperature: 0.8,
+            },
+        });
+        
+        const jsonText = response.text.trim();
+        try {
+            return JSON.parse(jsonText) as MnemonicStory;
+        } catch (e) {
+            console.error("Failed to parse JSON from Gemini:", jsonText);
+            throw new Error("Invalid JSON response from AI.");
+        }
+
+    } catch (error) {
+        console.error(`Error generating mnemonic story for number ${number}:`, error);
+        throw error;
+    }
 };

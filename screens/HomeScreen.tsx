@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { UserStats, Screen } from '../types';
+import MemorizeModal from '../components/MemorizeModal';
 
 interface StatCardProps {
   label: string;
@@ -23,6 +24,15 @@ interface HomeScreenProps {
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ stats, navigate }) => {
+  const [numberToMemorize, setNumberToMemorize] = useState('');
+  const [isMemorizeModalOpen, setIsMemorizeModalOpen] = useState(false);
+
+  const handleMemorizeClick = () => {
+    if (numberToMemorize.trim().length > 0) {
+      setIsMemorizeModalOpen(true);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
@@ -34,6 +44,29 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ stats, navigate }) => {
         <StatCard label="Daily Streak" value={`${stats.dailyStreak} Days`} icon="🔥" />
         <StatCard label="Accuracy" value={`${stats.accuracy}%`} icon="🎯" />
         <StatCard label="Speed (DPM)" value={stats.speed} icon="⚡️" />
+      </div>
+
+      <div className="bg-slate-800 p-6 rounded-xl shadow-lg">
+        <h2 className="text-xl font-bold mb-4 text-white">Quick Memo</h2>
+        <p className="text-slate-400 mb-4">
+          Enter a number you want to remember, and we'll generate a mnemonic for you.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="tel"
+            value={numberToMemorize}
+            onChange={(e) => setNumberToMemorize(e.target.value.replace(/[^0-9]/g, ''))}
+            placeholder="e.g., 1492"
+            className="flex-grow bg-slate-700 border-2 border-slate-600 text-white text-lg p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
+          />
+          <button
+            onClick={handleMemorizeClick}
+            disabled={!numberToMemorize.trim()}
+            className="bg-purple-600 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg hover:bg-purple-500 transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"
+          >
+            Memorize
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -70,6 +103,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ stats, navigate }) => {
           )}
         </div>
       </div>
+
+       <MemorizeModal
+        isOpen={isMemorizeModalOpen}
+        onClose={() => setIsMemorizeModalOpen(false)}
+        numberToMemorize={numberToMemorize}
+      />
     </div>
   );
 };

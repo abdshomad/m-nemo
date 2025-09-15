@@ -40,3 +40,9 @@ export interface Achievement {
   unlocked: boolean;
   icon: React.ComponentType<{ className?: string }>;
 }
+
+export interface MnemonicStory {
+  breakdown: string;
+  word: string;
+  story: string;
+}
