@@ -28,16 +28,20 @@ const App: React.FC = () => {
 
   const handlePracticeComplete = useCallback((accuracy: number, speed: number) => {
     setUserStats(prevStats => {
-        const completed = activeSystem 
-            ? [...new Set([...prevStats.completedLessons, activeSystem])] 
-            : prevStats.completedLessons;
+        const newCompletedPractices = { ...prevStats.completedPractices };
+        if (activeSystem && activeMode) {
+            const systemPractices = newCompletedPractices[activeSystem] || [];
+            if (!systemPractices.includes(activeMode)) {
+                newCompletedPractices[activeSystem] = [...systemPractices, activeMode];
+            }
+        }
 
         return {
           ...prevStats,
           accuracy: Math.round((prevStats.accuracy + accuracy) / 2),
           speed: Math.round((prevStats.speed + speed) / 2),
           dailyStreak: prevStats.dailyStreak + 1, // Simplified for example
-          completedLessons: completed,
+          completedPractices: newCompletedPractices,
         };
     });
 
@@ -60,7 +64,7 @@ const App: React.FC = () => {
     });
 
     setCurrentScreen(Screen.Home);
-  }, [activeSystem]);
+  }, [activeSystem, activeMode]);
   
   const handleOnboardingComplete = useCallback(() => {
     setCurrentScreen(Screen.Home);
@@ -86,8 +90,24 @@ const App: React.FC = () => {
         if (userStats.speed >= 60) unlock('speed-60');
 
         // Completion
-        if (userStats.completedLessons.length >= TOTAL_SYSTEMS) {
+        if (Object.keys(userStats.completedPractices).length >= TOTAL_SYSTEMS) {
             unlock('all-systems');
+        }
+
+        // System Mastery
+        const numPracticeModes = Object.values(PracticeMode).length;
+        const systemToAchievementId: Record<MnemonicSystem, string> = {
+            [MnemonicSystem.Major]: 'major-master',
+            [MnemonicSystem.Dominic]: 'dominic-master',
+            [MnemonicSystem.NumberRhyme]: 'number-rhyme-master',
+            [MnemonicSystem.NumberShape]: 'number-shape-master',
+        };
+
+        for (const system of Object.values(MnemonicSystem)) {
+            const completedModes = userStats.completedPractices[system] || [];
+            if (completedModes.length >= numPracticeModes) {
+                unlock(systemToAchievementId[system]);
+            }
         }
 
         return newAchievements;
@@ -101,7 +121,7 @@ const App: React.FC = () => {
       case Screen.Home:
         return <HomeScreen stats={userStats} navigate={setCurrentScreen} />;
       case Screen.Learn:
-        return <LearnScreen onStartPractice={handlePracticeStart} completedSystems={userStats.completedLessons} />;
+        return <LearnScreen onStartPractice={handlePracticeStart} completedSystems={Object.keys(userStats.completedPractices) as MnemonicSystem[]} />;
       case Screen.Practice:
         // Default to ConversionDrill if mode is somehow not set
         return <PracticeScreen 

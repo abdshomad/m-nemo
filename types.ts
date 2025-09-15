@@ -28,7 +28,9 @@ export interface UserStats {
   dailyStreak: number;
   accuracy: number;
   speed: number;
-  completedLessons: MnemonicSystem[];
+  completedPractices: {
+    [key in MnemonicSystem]?: PracticeMode[];
+  };
 }
 
 export interface Achievement {

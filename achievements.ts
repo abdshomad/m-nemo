@@ -19,6 +19,12 @@ export const ACHIEVEMENT_DEFINITIONS: Omit<Achievement, 'unlocked'>[] = [
   { id: 'speed-40', title: 'Quick Thinker', description: 'Reach an average speed of 40 DPM.', icon: SpeedIcon },
   { id: 'speed-60', title: 'Lightning Fast', description: 'Reach an average speed of 60 DPM.', icon: SpeedIcon },
   { id: 'all-systems', title: 'System Specialist', description: 'Complete a practice for all mnemonic systems.', icon: TrophyIcon },
+
+  // System Mastery achievements
+  { id: 'major-master', title: 'Major System Master', description: 'Complete all practice modes for the Major System.', icon: SparklesIcon },
+  { id: 'dominic-master', title: 'Dominic System Master', description: 'Complete all practice modes for the Dominic System.', icon: SparklesIcon },
+  { id: 'number-rhyme-master', title: 'Number Rhyme Master', description: 'Complete all practice modes for the Number Rhyme System.', icon: SparklesIcon },
+  { id: 'number-shape-master', title: 'Number Shape Master', description: 'Complete all practice modes for the Number Shape System.', icon: SparklesIcon },
 ];
 
 export const TOTAL_SYSTEMS = Object.keys(MnemonicSystem).length;

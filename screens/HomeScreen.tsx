@@ -56,9 +56,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ stats, navigate }) => {
       <div>
         <h2 className="text-xl font-bold mb-2">Completed Lessons</h2>
         <div className="bg-slate-800 p-4 rounded-lg">
-          {stats.completedLessons.length > 0 ? (
+          {Object.keys(stats.completedPractices).length > 0 ? (
             <ul className="space-y-2">
-              {stats.completedLessons.map(lesson => (
+              {Object.keys(stats.completedPractices).map(lesson => (
                 <li key={lesson} className="flex items-center space-x-2 text-slate-300">
                   <span className="text-green-400">✓</span>
                   <span>{lesson}</span>

@@ -1,11 +1,13 @@
 
-import { MnemonicSystem, UserStats } from './types';
+import { MnemonicSystem, UserStats, PracticeMode } from './types';
 
 export const INITIAL_USER_STATS: UserStats = {
   dailyStreak: 0,
   accuracy: 85,
   speed: 25,
-  completedLessons: [MnemonicSystem.Major],
+  completedPractices: {
+    [MnemonicSystem.Major]: [PracticeMode.ConversionDrill],
+  },
 };
 
 export const MNEMONIC_SYSTEMS = [

@@ -2,6 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { MnemonicSystem, PracticeMode, PracticeConfig } from '../types';
 import { getMnemonicHint, validateMnemonicAnswer } from '../services/geminiService';
 
+const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => (
+    <div className="w-full bg-slate-700 rounded-full h-2.5 mb-6 shadow-inner">
+        <div 
+            className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2.5 rounded-full"
+            style={{ 
+                width: `${progress}%`,
+                transition: 'width 1s linear'
+            }}
+        />
+    </div>
+);
+
 const generateRandomNumber = (length: number): string => {
   return Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
 };
@@ -116,20 +128,23 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
     }
 
     const getDynamicInputClass = () => {
-        // Prioritize transient feedback while typing
+        // Feedback after submission (takes priority)
+        if (feedback === 'correct') return 'border-green-500 animate-pulse-green';
+        if (feedback === 'incorrect') return 'border-red-500 animate-shake';
+
+        // Transient feedback while typing
         if (charFeedback === 'correct') return 'border-green-500';
         if (charFeedback === 'incorrect') return 'border-red-500';
         
-        // Persistent feedback after clicking "Check"
-        if (feedback === 'correct') return 'border-green-500';
-        if (feedback === 'incorrect') return 'border-red-500';
-
-        // Default and focus states
+        // Default state
         return 'border-slate-600 focus:ring-2 focus:ring-cyan-500';
     };
+    
+    const progress = (timer / config.timeLimit) * 100;
 
     return (
         <div className="w-full max-w-sm text-center">
+            <ProgressBar progress={progress} />
             <div className="flex justify-between items-center w-full mb-4">
                 <div className="text-slate-400">{system}</div>
                 <div className="text-2xl font-bold text-cyan-400">{timer}s</div>
@@ -143,7 +158,7 @@ const ConversionDrill: React.FC<{ system: MnemonicSystem; onComplete: (accuracy:
                 value={userInput}
                 onChange={handleInputChange}
                 placeholder="Type your mnemonic word..."
-                className={`w-full bg-slate-700 border-2 ${getDynamicInputClass()} text-white text-center text-lg p-4 rounded-lg focus:outline-none transition-colors duration-200`}
+                className={`w-full bg-slate-700 border-2 ${getDynamicInputClass()} text-white text-center text-lg p-4 rounded-lg focus:outline-none transition-all duration-300`}
             />
             <button
                 onClick={handleCheckAnswer}
@@ -230,13 +245,16 @@ const NumberAssociationDrill: React.FC<{ system: MnemonicSystem; onComplete: (ac
     }
     
     const getDynamicInputClass = () => {
-        if (feedback === 'correct') return 'border-green-500';
+        if (feedback === 'correct') return 'border-green-500 animate-pulse-green';
         if (feedback === 'incorrect') return 'border-red-500 animate-shake';
         return 'border-slate-600 focus:ring-2 focus:ring-cyan-500';
     };
+    
+    const progress = (timer / config.timeLimit) * 100;
 
     return (
         <div className="w-full max-w-sm text-center">
+            <ProgressBar progress={progress} />
             <div className="flex justify-between items-center w-full mb-4">
                 <div className="text-slate-400">{system}</div>
                 <div className="text-2xl font-bold text-cyan-400">{timer}s</div>
@@ -251,7 +269,7 @@ const NumberAssociationDrill: React.FC<{ system: MnemonicSystem; onComplete: (ac
                 onChange={(e) => setUserInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type your association..."
-                className={`w-full bg-slate-700 border-2 ${getDynamicInputClass()} text-white text-center text-lg p-4 rounded-lg focus:outline-none transition-colors duration-200`}
+                className={`w-full bg-slate-700 border-2 ${getDynamicInputClass()} text-white text-center text-lg p-4 rounded-lg focus:outline-none transition-all duration-300`}
             />
             <button
                 onClick={handleCheckAnswer}
@@ -309,10 +327,13 @@ const TimedChallenge: React.FC<{ onComplete: (accuracy: number, speed: number) =
         return <FinishScreen accuracy={score.accuracy} speed={score.speed} onComplete={onComplete} scoreLabel="Digits Recalled"/>;
     }
 
+    const progress = (timer / config.timeLimit) * 100;
+
     return (
         <div className="w-full max-w-md text-center">
             {phase === 'MEMORIZING' && (
                  <>
+                    <ProgressBar progress={progress} />
                     <div className="flex justify-between items-center w-full mb-4">
                         <div className="text-slate-400">Memorize the Sequence</div>
                         <div className="text-2xl font-bold text-cyan-400">{timer}s</div>
