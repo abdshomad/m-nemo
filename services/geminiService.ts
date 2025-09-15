@@ -2,15 +2,16 @@ import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { MnemonicSystem } from '../types';
 
 const getSystemPrompt = (system: MnemonicSystem, number: string): string => {
+  const basePrompt = `You are an expert mnemonic coach providing a concise, actionable hint. Be creative but keep it simple and common.`;
   switch (system) {
     case MnemonicSystem.Major:
-      return `Generate a single, common, and memorable English word for the number ${number} using the Major System rules (0=s/z, 1=t/d, 2=n, 3=m, 4=r, 5=l, 6=j/sh/ch, 7=k/g, 8=f/v, 9=p/b). Vowels are free.`;
+      return `${basePrompt} Give a hint for the number ${number} using the Major System. First, list the consonant sounds for each digit (0=s/z, 1=t/d, 2=n, 3=m, 4=r, 5=l, 6=j/sh, 7=k/g, 8=f/v, 9=p/b). Then, suggest one common English word that fits. For example, for 42, you would suggest: "Sounds: 'r', 'n'. How about 'rain'?"`;
     case MnemonicSystem.Dominic:
-      return `Generate a famous person and a simple action for the number ${number} using the Dominic System (1=A, 2=B, 3=C, 4=D, 5=E, 6=S, 7=G, 8=H, 9=N, 0=O). For example, 15 could be AE -> Albert Einstein. Give me a person and an action.`;
+      return `${basePrompt} Give a hint for the number ${number} using the Dominic System. First, convert the number to initials (1=A, 2=B, 3=C, 4=D, 5=E, 6=S, 7=G, 8=H, 9=N, 0=O). Then, suggest a famous person and a simple action. For example, for 15, you would suggest: "Initials: A.E. Think of: Albert Einstein eating."`;
     case MnemonicSystem.NumberRhyme:
-      return `Generate a simple, memorable rhyming phrase for the number ${number}. For example, for '1', you could suggest 'a bun'.`;
+      return `${basePrompt} Give a hint for the number ${number} using the Number Rhyme system. Suggest a simple, common word that rhymes with the final digit. For example, for 21, you might say: "One rhymes with 'sun'."`;
     case MnemonicSystem.NumberShape:
-      return `Describe a simple, memorable image based on the shapes of the digits in the number ${number}. For example, for '2', you could suggest 'a swan'.`;
+      return `${basePrompt} Give a hint for the number ${number} using the Number Shape system. Describe a simple object a digit looks like. For example, for a number ending in 2, you might say: "The 2 looks like a swan."`;
     default:
       return `Give me a creative way to remember the number ${number}.`;
   }
@@ -71,12 +72,14 @@ export const getMnemonicHint = async (system: MnemonicSystem, number: string): P
 
     const text = response.text;
     if (!text) {
-        throw new Error("No text returned from Gemini API.");
+        console.error("No text returned from Gemini API.");
+        return "Sorry, I couldn't come up with a hint right now. Please try again!";
     }
 
     return text.trim();
   } catch (error) {
     console.error(`Error fetching hint from Gemini for number ${number}:`, error);
-    throw new Error("Failed to generate hint.");
+    // Return a user-friendly message instead of throwing an error
+    return "Sorry, there was an issue getting a hint. Please check your connection and try again.";
   }
 };
