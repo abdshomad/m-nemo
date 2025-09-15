@@ -91,36 +91,40 @@ export const getMnemonicHint = async (system: MnemonicSystem, number: string): P
   }
 };
 
-const getMnemonicStorySystemPrompt = (system: MnemonicSystem, number: string): string => {
-  const basePrompt = `You are a world-class mnemonic expert, specializing in making numbers unforgettable. A user wants to memorize the number: ${number}. Your task is to generate a creative and effective mnemonic using the ${system}. Be vivid, concise, and follow the JSON output format precisely.`;
+const getMnemonicStorySystemPrompt = (system: MnemonicSystem, number: string, isExaggerated: boolean): string => {
+  let basePrompt = `You are a world-class mnemonic expert, specializing in making numbers unforgettable. A user wants to memorize the number: ${number}. Your task is to generate a creative and effective mnemonic using the ${system}. Be vivid, concise, and follow the JSON output format precisely.`;
+
+  const storyInstruction = isExaggerated
+    ? "Create a wildly over-the-top, absurd, and comical story or image. Use extreme sensory details (sights, sounds, smells, feelings). Make it bizarre and unforgettable."
+    : "Create a short, absurd, and memorable story or image. Make it sensory and emotional.";
 
   switch (system) {
     case MnemonicSystem.Major:
       return `${basePrompt}
       1.  **Breakdown**: Analyze the number according to the Major System's phonetic code (0=s/z, 1=t/d, 2=n, 3=m, 4=r, 5=l, 6=j/sh/ch, 7=k/g, 8=f/v, 9=p/b). Show the digit-to-sound mapping.
       2.  **Word**: Form a single, common, and highly visual English word from the consonant sounds. Vowels and the letters w, h, y are free.
-      3.  **Story**: Create a short, absurd, and memorable story or image involving that word. Make it sensory and emotional.`;
+      3.  **Story**: ${storyInstruction} This story should involve the generated word.`;
     case MnemonicSystem.Dominic:
        return `${basePrompt}
       1.  **Breakdown**: Convert the number into pairs of digits, each pair forming initials based on the Dominic System (1=A, 2=B, 3=C, 4=D, 5=E, 6=S, 7=G, 8=H, 9=N, 0=O).
       2.  **Word**: For each pair of initials, identify a famous person. Describe a distinct action associated with that person.
-      3.  **Story**: Combine the person from the first pair with the action from the second pair (and so on) to create a single, bizarre, and unforgettable scene. If there's an odd number of digits, be creative with the last one.`;
+      3.  **Story**: ${storyInstruction} This story should combine the person from the first pair with the action from the second pair (and so on) to create a single, unforgettable scene.`;
     case MnemonicSystem.NumberRhyme:
       return `${basePrompt}
       1.  **Breakdown**: For each digit in the number, state its common rhyming word (e.g., 1=sun, 2=shoe, 3=tree).
       2.  **Word**: This isn't a single word, but the sequence of rhyming objects. List them clearly.
-      3.  **Story**: Weave the rhyming objects into a simple, linear story. The objects must appear in the correct order.`;
+      3.  **Story**: ${storyInstruction} This story must weave the rhyming objects into a simple, linear narrative in the correct order.`;
     case MnemonicSystem.NumberShape:
       return `${basePrompt}
       1.  **Breakdown**: For each digit in the number, describe the object it visually resembles (e.g., 2=swan, 8=snowman).
       2.  **Word**: List the sequence of shape-objects.
-      3.  **Story**: Create a vivid image or very short story that connects the shape-objects in the correct sequence.`;
+      3.  **Story**: ${storyInstruction} This story should connect the shape-objects in the correct sequence.`;
     default:
       return `Generate a memorable story for the number ${number}.`;
   }
 }
 
-export const generateMnemonicStory = async (system: MnemonicSystem, number: string): Promise<MnemonicStory> => {
+export const generateMnemonicStory = async (system: MnemonicSystem, number: string, isExaggerated: boolean = false): Promise<MnemonicStory> => {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
         console.warn("API_KEY environment variable not set. Using mock generation.");
@@ -133,7 +137,7 @@ export const generateMnemonicStory = async (system: MnemonicSystem, number: stri
 
     try {
         const ai = new GoogleGenAI({ apiKey });
-        const prompt = getMnemonicStorySystemPrompt(system, number);
+        const prompt = getMnemonicStorySystemPrompt(system, number, isExaggerated);
         
         const response: GenerateContentResponse = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -149,7 +153,7 @@ export const generateMnemonicStory = async (system: MnemonicSystem, number: stri
                     },
                     required: ["breakdown", "word", "story"]
                 },
-                temperature: 0.8,
+                temperature: isExaggerated ? 0.9 : 0.8,
             },
         });
         

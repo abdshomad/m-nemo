@@ -9,21 +9,40 @@ interface MemorizeModalProps {
     numberToMemorize: string;
 }
 
+const ExaggerateToggle: React.FC<{ checked: boolean; onChange: (checked: boolean) => void }> = ({ checked, onChange }) => (
+    <div className="flex items-center space-x-2">
+        <span className={`font-semibold text-sm transition-colors ${checked ? 'text-purple-400' : 'text-slate-400'}`}>
+            Exaggerate ✨
+        </span>
+        <button
+            role="switch"
+            aria-checked={checked}
+            onClick={() => onChange(!checked)}
+            className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-purple-500 ${checked ? 'bg-purple-600' : 'bg-slate-600'}`}
+        >
+            <span
+                className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform duration-300 ${checked ? 'translate-x-6' : 'translate-x-1'}`}
+            />
+        </button>
+    </div>
+);
+
 const MemorizeModal: React.FC<MemorizeModalProps> = ({ isOpen, onClose, numberToMemorize }) => {
     const [selectedSystem, setSelectedSystem] = useState<MnemonicSystem>(MnemonicSystem.Major);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [mnemonicData, setMnemonicData] = useState<MnemonicStory | null>(null);
     const [copySuccess, setCopySuccess] = useState('');
+    const [isExaggerated, setIsExaggerated] = useState(false);
 
-    const fetchMnemonic = useCallback(async (system: MnemonicSystem) => {
+    const fetchMnemonic = useCallback(async (system: MnemonicSystem, exaggerated: boolean) => {
         if (!numberToMemorize) return;
         setIsLoading(true);
         setError(null);
         setMnemonicData(null);
         setCopySuccess('');
         try {
-            const data = await generateMnemonicStory(system, numberToMemorize);
+            const data = await generateMnemonicStory(system, numberToMemorize, exaggerated);
             setMnemonicData(data);
         } catch (err) {
             setError('Could not generate mnemonic. Please try again later.');
@@ -35,9 +54,9 @@ const MemorizeModal: React.FC<MemorizeModalProps> = ({ isOpen, onClose, numberTo
 
     useEffect(() => {
         if (isOpen) {
-            fetchMnemonic(selectedSystem);
+            fetchMnemonic(selectedSystem, isExaggerated);
         }
-    }, [isOpen, selectedSystem, fetchMnemonic]);
+    }, [isOpen, selectedSystem, isExaggerated, fetchMnemonic]);
 
     const handleSystemChange = (system: MnemonicSystem) => {
         setSelectedSystem(system);
@@ -106,7 +125,7 @@ const MemorizeModal: React.FC<MemorizeModalProps> = ({ isOpen, onClose, numberTo
             role="dialog"
         >
             <div 
-                className="bg-slate-800 border border-slate-700 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col"
+                className={`bg-slate-800 rounded-2xl w-full max-w-lg max-h-[90vh] flex flex-col transition-all duration-300 ${isExaggerated ? 'border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.5)]' : 'border-slate-700'}`}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -143,16 +162,19 @@ const MemorizeModal: React.FC<MemorizeModalProps> = ({ isOpen, onClose, numberTo
 
                 {/* Footer */}
                 <div className="p-4 border-t border-slate-700 flex justify-between items-center bg-slate-800/50 rounded-b-2xl">
-                    <div className="relative w-24">
-                       <button 
-                            onClick={handleCopyToClipboard}
-                            disabled={!mnemonicData || !!copySuccess}
-                            className="flex items-center space-x-2 text-slate-400 hover:text-white transition-colors disabled:text-slate-600 disabled:cursor-not-allowed"
-                        >
-                           <CopyIcon className="h-5 w-5" />
-                           <span>Copy</span>
-                       </button>
-                       {copySuccess && <div className="absolute -top-8 left-0 text-xs bg-green-500 text-white rounded-md px-2 py-1 animate-fadeIn">{copySuccess}</div>}
+                    <div className="flex items-center gap-4">
+                        <div className="relative w-24">
+                           <button 
+                                onClick={handleCopyToClipboard}
+                                disabled={!mnemonicData || !!copySuccess}
+                                className="flex items-center space-x-2 text-slate-400 hover:text-white transition-colors disabled:text-slate-600 disabled:cursor-not-allowed"
+                            >
+                               <CopyIcon className="h-5 w-5" />
+                               <span>Copy</span>
+                           </button>
+                           {copySuccess && <div className="absolute -top-8 left-0 text-xs bg-green-500 text-white rounded-md px-2 py-1 animate-fadeIn">{copySuccess}</div>}
+                        </div>
+                        <ExaggerateToggle checked={isExaggerated} onChange={setIsExaggerated} />
                     </div>
                     <button 
                         onClick={onClose} 
